@@ -1,0 +1,261 @@
+.reservation-container {
+  width: 100vw;             /* full viewport width */
+  min-height: 100vh;        /* full viewport height */
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #fffbeb;
+  border-radius: 0;         /* remove rounded corners to fit full page */
+  position: relative;
+  overflow: hidden;
+  box-shadow: none;         /* remove shadow if desired */
+  
+  /* New: set as flex container */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header and logo remain unchanged */
+.close-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #333;
+}
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+}
+
+.unimet-logo {
+  height: 80px;
+}
+
+/* New: Make reservation-content take up available space */
+.reservation-content {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+/* Panels fill the space and allow scrolling if needed */
+.left-panel {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.right-panel {
+  flex: 1;
+  background-color: #deb887;
+  padding: 20px;
+  border-radius: 0 0 8px 0;
+  overflow-y: auto;
+}
+
+/* Existing styles for header */
+.reservation-header h1 {
+  background-color: #c17f3e;
+  color: white;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+/* Keep the rest of your styles as is */
+.features-list {
+  margin-bottom: 20px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  background-color: #f5f5f5;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.checkmark {
+  color: green;
+  font-weight: bold;
+  margin-right: 10px;
+  border: 1px solid green;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.cart-items {
+  margin-bottom: 20px;
+}
+
+.cart-item {
+  display: flex;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.item-image {
+  width: 100px;
+  height: 80px;
+  overflow: hidden;
+}
+
+.item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.item-details {
+  padding: 10px;
+}
+
+.item-details h3 {
+  margin: 0 0 5px 0;
+  font-size: 16px;
+}
+
+.item-details p {
+  margin: 2px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.total-price {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #aaa;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.total-price p {
+  margin: 0;
+  font-weight: bold;
+}
+
+.total-price .price {
+  font-size: 20px;
+}
+
+.payment-section {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.payment-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.payment-icon {
+  margin-right: 10px;
+  font-size: 20px;
+}
+
+.payment-header h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.payment-method {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.payment-method p {
+  margin-bottom: 10px;
+}
+
+.paypal-button {
+  background-color: #ffc439;
+  padding: 10px 20px;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  width: 100%;
+  max-width: 300px;
+}
+
+.paypal-button img {
+  height: 30px;
+}
+
+.login-form {
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.login-button {
+  background-color: #2c3e85;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  display: block;
+  margin: 0 auto;
+  margin-top: 10px;
+}
+
+.payment-button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 18px;
+  margin-top: auto;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 768px) {
+  .reservation-content {
+    flex-direction: column;
+  }
+  
+  .right-panel {
+    border-radius: 0 0 8px 8px;
+  }
+}
