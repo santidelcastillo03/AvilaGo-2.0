@@ -1,0 +1,151 @@
+.landing-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #fefae0;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  width: 100%;
+}
+
+.landing-header-logo {
+  margin-right: 2rem;
+}
+
+.landing-header-logo img {
+  height: 50px;
+}
+
+.landing-nav {
+  flex-grow: 1;
+}
+
+.landing-nav ul {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+}
+
+.landing-nav ul li a {
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.landing-nav ul li a:hover {
+  color: #c17f45; 
+}
+
+.landing-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-left: auto;
+}
+
+.landing-nav-right a {
+  color: #333;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.landing-nav-right a:hover {
+  color: #c17f45; 
+}
+
+.search-icon, .user-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.user-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.auth-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+}
+
+
+.login-btn {
+  color: #2b4923;
+  background-color: transparent;
+  border: 1.5px solid #2b4923;
+}
+
+.login-btn:hover {
+  background-color: rgba(43, 73, 35, 0.1);
+}
+
+
+.register-btn {
+  background-color: #2b4923;
+  color: white !important; 
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.register-btn:hover {
+  background-color: #2b4923; 
+  color: #c17f45 !important; 
+}
+
+.logout-btn {
+  color: #c17f45;
+  background-color: transparent;
+  border: 1.5px solid #c17f45;
+}
+
+.logout-btn:hover {
+  background-color: rgba(193, 127, 69, 0.1);
+}
+
+@media (max-width: 768px) {
+  .landing-header {
+    flex-direction: column;
+    padding: 1rem;
+  }
+  
+  .landing-header-logo {
+    margin-bottom: 1rem;
+    margin-right: 0;
+  }
+  
+  .landing-nav {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+  
+  .landing-nav ul {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .landing-nav-right {
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-left: 0;
+  }
+}
