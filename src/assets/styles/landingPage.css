@@ -123,21 +123,43 @@ section {
   margin-bottom: 2rem;
 }
 
-.gallery-image, 
+.gallery-image {
+  width: 25%; /* Reduced from 55% to 45% */
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+  /* No transition or transform effects */
+}
+
+/* Keep routes image at original size */
 .routes-image {
   width: 55%;
   overflow: hidden;
   border-radius: 10px;
-  box-shadow: 0 8px 15px rgba(0,0,0,0.2); /* Enhanced shadow */
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for hover effects */
+  box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+.gallery-image:hover {
+  /* Override any inherited hover effects */
+  transform: none !important;
+  box-shadow: 0 8px 15px rgba(0,0,0,0.2) !important;
+}
+
+.gallery-section .section-text {
+  width: 80%; /* Increased from 40% to balance with smaller image */
+}
+
+/* Keep the common styles for both images */
 .gallery-image img, 
 .routes-image img {
   width: 100%;
   height: auto;
   display: block;
 }
+
+/* Adjust section text width to balance with smaller gallery image */
+
 
 /* GALLERY SECTION */
 .gallery-section {
