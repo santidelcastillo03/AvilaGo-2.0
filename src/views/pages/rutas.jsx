@@ -104,13 +104,8 @@ const Rutas = () => {
                 <RouteCard
                   title={route.title}
                   imageSrc={route.imageSrc}
-                />
-                <button 
-                  className="info-button"
                   onClick={() => navigate('/rutasInfo', { state: route })}
-                >
-                  Ver información y actividades
-                </button>
+                />
               </div>
             ))}
           </div>

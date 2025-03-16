@@ -1,14 +1,19 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import '../../assets/styles/routeCard.css';
 
-const RouteCard = ({ id, title, imageSrc }) => {
+const RouteCard = ({ id, title, imageSrc, onClick }) => {
   const navigate = useNavigate();
-  
-  // Function to handle button click
-  const handleViewRoute = () => {
-    console.log("Navigating to route:", id); // Debug logging
-    navigate(`/routes/${id}`);
+
+  const handleClick = () => {
+    if (onClick) {
+      // Si se recibió una función onClick, se ejecuta
+      onClick();
+    } else {
+      // Comportamiento por defecto (si no se pasó onClick)
+      console.log("Navigating to route:", id);
+      navigate(`/routes/${id}`);
+    }
   };
 
   return (
@@ -19,10 +24,9 @@ const RouteCard = ({ id, title, imageSrc }) => {
       <div className="route-info">
         <h3>{title}</h3>
         <div className="route-button-container">
-          {/* Use both Link and an onClick button for redundancy */}
           <button 
             className="route-info-button"
-            onClick={handleViewRoute}
+            onClick={handleClick}
           >
             Ver información y actividades
             <span className="arrow-icon">→</span>
