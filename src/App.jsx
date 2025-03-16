@@ -7,6 +7,7 @@ import Rutas from './views/pages/rutas';
 import Payment from './views/pages/payment';
 import Gallery from './views/pages/gallery';
 import Profile from './views/pages/profile';
+import RutaInfo from './views/pages/rutasInfo';
 
 function App() {
   return (
@@ -20,6 +21,8 @@ function App() {
           <Route path="/payment" element={<Payment />} />
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/rutainfo" element={<RutaInfo />} /> 
+          {/* Puedes agregar más rutas aquí según sea necesario */}
         </Routes>
       </Router>
     </AuthProvider>
