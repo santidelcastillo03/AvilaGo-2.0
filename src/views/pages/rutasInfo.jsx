@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
@@ -9,8 +9,12 @@ import '../../assets/styles/rutasInfo.css';
 const TrailDetailComponent = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [mapLoaded, setMapLoaded] = useState(true);
+  const [mapLoaded, setMapLoaded] = useState(false);
   const [mapError, setMapError] = useState(null);
+  const mapRef = useRef(null);
+  
+  // Default coordinates for El Avila National Park
+  const defaultCoordinates = { lat: 10.5347, lng: -66.8864 };
   
   const routeData = location.state || {
     // Default values if no state is received
@@ -19,8 +23,133 @@ const TrailDetailComponent = () => {
     about: "Información no disponible.",
     difficulty: "N/A",
     distance: "N/A",
-    map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d125630.67149933334!2d-66.95195872656248!3d10.502731800000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8c2a58adcd824807%3A0x93dd2eae0a998483!2sCaracas%2C%20Distrito%20Capital!5e0!3m2!1ses!2sve!4v1651234567890!5m2!1ses!2sve",
+    coordinates: defaultCoordinates,
     imageSrc: ""
+  };
+  
+  // Extract coordinates from routeData or use defaults
+  const getCoordinates = () => {
+    // If routeData has proper coordinates object
+    if (routeData.coordinates && 
+        typeof routeData.coordinates === 'object' &&
+        'lat' in routeData.coordinates && 
+        'lng' in routeData.coordinates) {
+      return routeData.coordinates;
+    }
+    
+    // If coordinates are stored as a string like "10.5347,-66.8864"
+    if (typeof routeData.coordinates === 'string') {
+      const parts = routeData.coordinates.split(',');
+      if (parts.length === 2) {
+        const lat = parseFloat(parts[0]);
+        const lng = parseFloat(parts[1]);
+        if (!isNaN(lat) && !isNaN(lng)) {
+          return { lat, lng };
+        }
+      }
+    }
+    
+    // If there's a map URL with coordinates in it, try to extract them
+    if (routeData.map && typeof routeData.map === 'string') {
+      // Look for patterns like @10.5347,-66.8864 in Google Maps URLs
+      const match = routeData.map.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+      if (match && match.length === 3) {
+        const lat = parseFloat(match[1]);
+        const lng = parseFloat(match[2]);
+        if (!isNaN(lat) && !isNaN(lng)) {
+          return { lat, lng };
+        }
+      }
+    }
+    
+    // Fall back to default coordinates
+    return defaultCoordinates;
+  };
+
+  // Initialize map using direct iframe embedding without API key
+  useEffect(() => {
+    if (!mapRef.current) return;
+    
+    try {
+      const coordinates = getCoordinates();
+      console.log("Using coordinates for map:", coordinates);
+      
+      // Create an iframe with Google Maps embed URL
+      const iframe = document.createElement('iframe');
+      iframe.style.width = '100%';
+      iframe.style.height = '100%';
+      iframe.style.border = 'none';
+      iframe.title = `Mapa de ${routeData.title}`;
+      
+      // Create Google Maps embed URL without API key
+      const lat = coordinates.lat;
+      const lng = coordinates.lng;
+      
+      // Use standard Google Maps URL that doesn't require API key
+      iframe.src = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3923!2d${lng}!3d${lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zM!5e0!3m2!1sen!2sus!4v1!5m2!1sen!2sus`;
+      
+      // Add event listeners
+      iframe.onload = () => {
+        console.log("Map iframe loaded successfully");
+        setMapLoaded(true);
+      };
+      
+      iframe.onerror = (error) => {
+        console.error("Error loading map iframe:", error);
+        setMapError("Error al cargar el mapa. Por favor, inténtalo de nuevo.");
+        
+        // Try fallback approach with standard Google Maps URL
+        tryFallbackMap(lat, lng);
+      };
+      
+      // Clear existing content and append iframe
+      while (mapRef.current.firstChild) {
+        mapRef.current.removeChild(mapRef.current.firstChild);
+      }
+      
+      mapRef.current.appendChild(iframe);
+      
+    } catch (error) {
+      console.error("Error setting up map:", error);
+      setMapError("Error al configurar el mapa: " + error.message);
+      
+      // Try fallback to direct Google Maps link
+      const coordinates = getCoordinates();
+      tryFallbackMap(coordinates.lat, coordinates.lng);
+    }
+  }, [routeData.title]);
+  
+  // Fallback approach if iframe loading fails
+  const tryFallbackMap = (lat, lng) => {
+    if (!mapRef.current) return;
+    
+    try {
+      // Create a link to Google Maps instead
+      const mapContainer = document.createElement('div');
+      mapContainer.className = 'fallback-map-container';
+      mapContainer.innerHTML = `
+        <p>El mapa interactivo no pudo cargarse.</p>
+        <a href="https://www.google.com/maps?q=${lat},${lng}" target="_blank" rel="noopener noreferrer" class="view-on-maps-button">
+          Ver ubicación en Google Maps
+        </a>
+        <div class="coordinates-display">
+          <p>Coordenadas: ${lat}, ${lng}</p>
+        </div>
+      `;
+      
+      // Clear existing content and append fallback
+      while (mapRef.current.firstChild) {
+        mapRef.current.removeChild(mapRef.current.firstChild);
+      }
+      
+      mapRef.current.appendChild(mapContainer);
+      setMapLoaded(true);
+      setMapError(null);
+      
+    } catch (error) {
+      console.error("Error setting up fallback map:", error);
+      setMapError("No se pudo mostrar la ubicación en el mapa.");
+    }
   };
 
   // Helper function for difficulty color class
@@ -33,63 +162,6 @@ const TrailDetailComponent = () => {
     if (diff === "difícil" || diff === "dificil" || diff === "hard") return "difficult";
     return "";
   };
-
-  // Function to handle iframe load
-  const handleIframeLoad = () => {
-    setMapLoaded(true);
-  };
-
-  // Function to handle iframe error
-  const handleIframeError = () => {
-    setMapError("No se pudo cargar el mapa");
-    setMapLoaded(true); // Hide loading indicator
-  };
-
-  // Helper function to ensure the map URL is properly formatted for embedding
-  const getMapEmbedUrl = (mapUrl) => {
-    if (!mapUrl) return null;
-
-    try {
-      // If it's already an embed URL, use it directly
-      if (mapUrl.includes('maps/embed')) {
-        return mapUrl;
-      }
-
-      // If it's a standard Google Maps URL, convert it to embed format
-      if (mapUrl.includes('maps/place') || mapUrl.includes('maps?q=') || mapUrl.includes('goo.gl/maps')) {
-        // Extract the important part from the URL (after the /maps/ part)
-        let cleanUrl = mapUrl;
-        
-        // Handle shortened URLs (goo.gl/maps)
-        if (mapUrl.includes('goo.gl/maps')) {
-          return `https://maps.google.com/maps?q=${encodeURIComponent(mapUrl)}&output=embed`;
-        }
-        
-        // Handle standard URLs
-        const mapsIndex = mapUrl.indexOf('/maps/');
-        if (mapsIndex !== -1) {
-          cleanUrl = mapUrl.substring(mapsIndex);
-        }
-        
-        // Create embed URL
-        return `https://www.google.com/maps/embed${cleanUrl}`;
-      }
-
-      // If it appears to be just coordinates, create a marker map
-      if (mapUrl.match(/^[-+]?\d+\.\d+,[-+]?\d+\.\d+$/)) {
-        return `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1000!2d${mapUrl.split(',')[1]}!3d${mapUrl.split(',')[0]}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zM!5e0!3m2!1sen!2sus!4v1!5m2!1sen!2sus`;
-      }
-
-      // Default: just return the URL as is and hope it works
-      return mapUrl;
-    } catch (error) {
-      console.error("Error processing map URL:", error);
-      return null;
-    }
-  };
-
-  // Get the map embed URL
-  const mapEmbedUrl = getMapEmbedUrl(routeData.map);
 
   return (
     <div className="trail-detail-page">
@@ -154,32 +226,17 @@ const TrailDetailComponent = () => {
             <div className="map-section">
               <h3 className="section-title">Ubicación en el mapa</h3>
               <div className="map-container">
-                {mapError ? (
+                {!mapLoaded && <div className="map-loading">Cargando mapa...</div>}
+                {mapError && (
                   <div className="map-error">
                     <p>Error al cargar el mapa</p>
                     <p>{mapError}</p>
                   </div>
-                ) : (
-                  <>
-                    {!mapLoaded && <div className="map-loading">Cargando mapa...</div>}
-                    {mapEmbedUrl ? (
-                      <iframe 
-                        title={`Mapa de ${routeData.title}`}
-                        src={mapEmbedUrl}
-                        className="map-iframe"
-                        allowFullScreen=""
-                        loading="lazy"
-                        referrerPolicy="no-referrer-when-downgrade"
-                        onLoad={handleIframeLoad}
-                        onError={handleIframeError}
-                      ></iframe>
-                    ) : (
-                      <div className="map-error">
-                        <p>No hay mapa disponible para esta ruta</p>
-                      </div>
-                    )}
-                  </>
                 )}
+                <div 
+                  ref={mapRef}
+                  className="google-map"
+                ></div>
               </div>
             </div>
           </div>
