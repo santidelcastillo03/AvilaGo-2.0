@@ -30,14 +30,27 @@ const TrailDetailComponent = () => {
   const initMap = () => {
     const mapElement = document.getElementById("google-map");
     if (!mapElement) return;
+    
+    // Si routeData.map es string, intenta parsearlo
+    let centerCoords = routeData.map;
+    if (typeof routeData.map === "string") {
+      try {
+        centerCoords = JSON.parse(routeData.map);
+      } catch (error) {
+        console.error("Error parsing map coordinates:", error);
+        // Opcional: definir coordenadas por defecto
+        centerCoords = { lat: 0, lng: 0 };
+      }
+    }
+  
     const map = new window.google.maps.Map(mapElement, {
-      center: routeData.map,
+      center: centerCoords,
       zoom: 14,
       mapTypeId: window.google.maps.MapTypeId.TERRAIN,
     });
     
     new window.google.maps.Marker({
-      position: routeData.map,
+      position: centerCoords,
       map: map,
       title: `${routeData.title} Punto de inicio`,
     });
