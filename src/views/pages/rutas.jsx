@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header.jsx';
-import Footer from '../components/Footer.jsx';  
+import Footer from '../components/Footer.jsx';
 import RouteCard from '../components/RouteCard';
 import '../../assets/styles/rutas.css';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
@@ -31,6 +32,7 @@ const Rutas = () => {
   const [routes, setRoutes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchRoutes = async () => {
@@ -46,16 +48,22 @@ const Rutas = () => {
           const routesData = routesSnapshot.docs.map((doc) => {
             const data = doc.data();
             const title = data.title || 'Unnamed Route';
-            
+            const about = data.about || '';
+            const difficulty = data.difficulty || '';
+            const distance = data.distance || '';
+            const map = data.map || null;
             const imageSrc = routeImages[title] || routeImages['default'];
             
             return {
               id: doc.id,
-              title: title,
-              imageSrc: imageSrc
+              title,
+              about,
+              difficulty,
+              distance,
+              map,
+              imageSrc
             };
           });
-          
           setRoutes(routesData);
         }
       } catch (err) {
@@ -68,7 +76,6 @@ const Rutas = () => {
     
     fetchRoutes();
   }, []);
-
 
   return (
     <div className="rutas-container">
@@ -93,18 +100,26 @@ const Rutas = () => {
         ) : (
           <div className="routes-grid">
             {routes.map(route => (
-              <RouteCard
-                key={route.id}
-                title={route.title}
-                imageSrc={route.imageSrc}
-              />
+              <div key={route.id} className="route-card-container">
+                <RouteCard
+                  title={route.title}
+                  imageSrc={route.imageSrc}
+                />
+                <button 
+                  className="info-button"
+                  onClick={() => navigate('/rutasInfo', { state: route })}
+                >
+                  Ver información y actividades
+                </button>
+              </div>
             ))}
           </div>
         )}
       </main>
       <div className="mountain-footer"></div>
+      <Footer />
     </div>
   );
 };
 
-export default Rutas; 
+export default Rutas;

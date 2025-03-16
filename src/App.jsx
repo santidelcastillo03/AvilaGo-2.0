@@ -21,7 +21,7 @@ function App() {
           <Route path="/payment" element={<Payment />} />
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/rutainfo" element={<RutaInfo />} /> 
+          <Route path="/rutasinfo" element={<RutaInfo />} /> 
           {/* Puedes agregar más rutas aquí según sea necesario */}
         </Routes>
       </Router>
