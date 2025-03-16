@@ -1,4 +1,4 @@
-import { auth } from "../../services/firebaseConfig.js";
+import { auth } from "../services/firebaseConfig.js";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 
 // Registrar usuario

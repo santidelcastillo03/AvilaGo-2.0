@@ -122,6 +122,34 @@
   background-color: rgba(193, 127, 69, 0.1);
 }
 
+/* Add to: c:\Users\Santiago\Desktop\ag\src\assets\styles\header.css */
+
+/* Profile picture in header */
+.profile-link {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.profile-pic {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #748e55;
+  transition: transform 0.2s ease;
+}
+
+.profile-pic:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 8px rgba(116, 142, 85, 0.6);
+}
+
+/* Adjust the auth-buttons to align items properly */
+.auth-buttons {
+  display: flex;
+  align-items: center;
+}
+
 @media (max-width: 768px) {
   .landing-header {
     flex-direction: column;

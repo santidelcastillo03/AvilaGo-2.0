@@ -1,0 +1,327 @@
+/* General styles for the profile page */
+.profile-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #f4f4f4;
+  }
+  
+  .profile-content {
+    flex: 1;
+    padding: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  /* Profile main sections */
+  .profile-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+  
+  /* Profile header */
+  .profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+  
+  .profile-header h1 {
+    font-size: 32px;
+    color: #2c3e50; /* Darker blue-gray color */
+    margin: 0;
+  }
+  
+  /* Profile sections */
+  .profile-section {
+    background-color: white;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .section-title {
+    color: #2c3e50; /* Matching header color */
+    font-size: 22px;
+    margin-top: 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+  }
+  
+  /* User details */
+  .user-name {
+    font-size: 24px;
+    color: #2c3e50; /* Matching header color */
+    margin: 0 0 10px 0;
+  }
+  
+  .user-email, .user-phone {
+    color: #34495e; /* Slightly lighter than headers */
+    margin: 8px 0;
+    font-size: 16px;
+  }
+  
+  .user-joined {
+    color: #7f8c8d; /* Lighter gray for less important info */
+    margin: 8px 0;
+    font-style: italic;
+  }
+
+  /* Add these styles for the role display */
+
+.user-role {
+    display: flex;
+    align-items: center;
+    margin: 8px 0;
+    font-size: 16px;
+    color: #34495e;
+  }
+  
+  .role-label {
+    font-weight: bold;
+    margin-right: 5px;
+  }
+  
+  .role-value {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-weight: 500;
+  }
+  
+  .role-admin {
+    background-color: #e74c3c;
+    color: white;
+  }
+  
+  .role-guia {
+    background-color: #3498db;
+    color: white;
+  }
+  
+  .role-estudiante {
+    background-color: #2ecc71;
+    color: white;
+  }
+  
+  .role-user {
+    background-color: #95a5a6;
+    color: white;
+  }
+  
+  /* Loading state */
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    flex: 1;
+  }
+  
+  .loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #748e55;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  /* Error state */
+  .error-container {
+    text-align: center;
+    padding: 50px 20px;
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+  }
+  
+  .error-container h2 {
+    color: #2c3e50; /* Matching header color */
+    margin-bottom: 20px;
+  }
+  
+  .error-container p {
+    color: #34495e; /* Slightly lighter than headers */
+    margin-bottom: 30px;
+    max-width: 600px;
+  }
+  
+  .login-button {
+    background-color: #748e55;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 30px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .login-button:hover {
+    background-color: #5f7346;
+  }
+  
+  /* User status */
+  .profile-title-section {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .user-status {
+    margin: 0;
+    color: #748e55;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  /* Edit button */
+  .edit-button {
+    background-color: #748e55;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .edit-button:hover {
+    background-color: #5f7346;
+  }
+  
+  /* Form fields in edit mode */
+  .input-group {
+    margin-bottom: 15px;
+  }
+  
+  .input-group label {
+    display: block;
+    color: #34495e;
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+  
+  .input-group input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    color: #2c3e50;
+  }
+  
+  /* Activities section */
+  .activities-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .activity-card {
+    display: flex;
+    background-color: #f8f8f8;
+    border-left: 4px solid #748e55;
+    padding: 15px;
+    border-radius: 4px;
+  }
+  
+  .activity-info {
+    flex: 1;
+  }
+  
+  .activity-info h4 {
+    margin: 0 0 8px 0;
+    color: #2c3e50;
+  }
+  
+  .activity-date, .activity-type {
+    display: inline-block;
+    color: #34495e;
+    margin-right: 15px;
+    font-size: 14px;
+  }
+  
+  .rating {
+    margin-top: 8px;
+  }
+  
+  .star {
+    color: #ccc;
+    font-size: 18px;
+  }
+  
+  .star.filled {
+    color: #f1c40f; /* A bright yellow for star ratings */
+  }
+  
+  .no-activities {
+    color: #7f8c8d;
+    font-style: italic;
+  }
+  
+  /* Settings section */
+  .settings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .setting-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  
+  .setting-info {
+    flex: 1;
+  }
+  
+  .setting-info h4 {
+    margin: 0 0 5px 0;
+    color: #2c3e50;
+  }
+  
+  .setting-info p {
+    margin: 0;
+    color: #34495e;
+    font-size: 14px;
+  }
+  
+ 
+  
+  /* Additional responsive styles */
+  @media screen and (max-width: 768px) {
+    .profile-content {
+      padding: 15px;
+    }
+    
+    .profile-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 15px;
+    }
+  }

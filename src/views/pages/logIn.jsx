@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
 import '../../assets/styles/logIn.css';
-import { login } from "./Auth";
+import { login } from "../../models/Auth.js";
 import googleLogo from '../../assets/images/googleLogo.png'; 
 import { sendPasswordResetEmail, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { auth } from '../../services/firebaseConfig.js';

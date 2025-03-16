@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../../assets/images/logo.png';
+import defaultProfileImg from '../../assets/images/default-profile.jpg';
 import '../../assets/styles/header.css';
 import { useAuth } from '../../context/AuthContext';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
@@ -8,29 +9,37 @@ import { getFirestore, doc, getDoc } from 'firebase/firestore';
 function Header() {
   const { currentUser, logout } = useAuth();
   const [userRole, setUserRole] = useState(null);
+  const [profilePic, setProfilePic] = useState(defaultProfileImg);
   
   useEffect(() => {
-    const fetchUserRole = async () => {
+    const fetchUserData = async () => {
       if (currentUser) {
         try {
           const db = getFirestore();
           const userDoc = await getDoc(doc(db, "users", currentUser.uid));
           
           if (userDoc.exists()) {
-            setUserRole(userDoc.data().role);
+            const userData = userDoc.data();
+            setUserRole(userData.role);
+            
+            // If user has a profile picture, use it
+            if (userData.profilePic) {
+              setProfilePic(userData.profilePic);
+            }
           } else {
             setUserRole(null);
           }
         } catch (error) {
-          console.error("Error fetching user role:", error);
+          console.error("Error fetching user data:", error);
           setUserRole(null);
         }
       } else {
         setUserRole(null);
+        setProfilePic(defaultProfileImg);
       }
     };
     
-    fetchUserRole();
+    fetchUserData();
   }, [currentUser]);
 
   const handleLogout = async () => {
@@ -73,9 +82,18 @@ function Header() {
         
         <div className="auth-buttons">
           {currentUser ? (
-            <button onClick={handleLogout} className="auth-btn logout-btn">
-              Cerrar sesión
-            </button>
+            <>
+              <Link to="/profile" className="profile-link">
+                <img 
+                  src={profilePic} 
+                  alt="Profile" 
+                  className="profile-pic" 
+                />
+              </Link>
+              <button onClick={handleLogout} className="auth-btn logout-btn">
+                Cerrar sesión
+              </button>
+            </>
           ) : (
             <>
               <Link to="/login" className="auth-btn login-btn">

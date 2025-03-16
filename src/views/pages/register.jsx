@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'; // Add useNavigate
 import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
 import '../../assets/styles/register.css';
-import { register } from "./Auth";
+import { register } from "../../models/Auth.js";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
 
 function Register() {

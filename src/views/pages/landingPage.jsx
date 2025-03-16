@@ -43,7 +43,7 @@ function LandingPage() {
           <div className="section-text">
             <h2>Galeria de<br />Fotos y Videos</h2>
             <div className="underline"></div>
-            <a href="#" className="btn-link">
+            <a href="gallery" className="btn-link">
               <button className="ver-button">Ver <i className="fa fa-arrow-right"></i></button>
             </a>
           </div>
