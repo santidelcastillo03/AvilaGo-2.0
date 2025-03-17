@@ -108,7 +108,7 @@ const ActivityInfo = () => {
   
   // Handle return to activities list
   const handleBack = () => {
-    navigate(`/activities/${activityData?.routeId}`);
+    navigate(-1); // Retrocede a la página anterior
   };
 
   // Get activity icon based on type
