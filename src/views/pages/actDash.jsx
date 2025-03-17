@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getFirestore, collection, query, where, getDocs, doc, updateDoc, getDoc, addDoc, Timestamp } from 'firebase/firestore';
+import { getFirestore, collection, query, where, getDocs, doc, deleteDoc, updateDoc, getDoc, addDoc, Timestamp } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
@@ -47,7 +47,7 @@ const ActDash = () => {
     price: '',
     requirements: '',
     rating: 0,
-    routeId: ''   // <-- Agregado para el dropdown
+    routeId: ''
   });
 
   const handleCreateModalChange = (e) => {
@@ -100,10 +100,32 @@ const ActDash = () => {
         rating: 0,
         routeId: ''
       });
-      // Refresca la página automáticamente
       window.location.reload();
     } catch (error) {
       console.error("Error creando actividad:", error);
+    }
+  };
+
+  // Función para actualizar la actividad en la base de datos (para editar)
+  const handleActivityEdit = async (activityId, updatedData) => {
+    try {
+      const activityRef = doc(db, "activities", activityId);
+      await updateDoc(activityRef, updatedData);
+      console.log("Actividad actualizada en la DB");
+      setActivities(prevActivities => prevActivities.map(act => act.id === activityId ? { ...act, ...updatedData } : act));
+    } catch (error) {
+      console.error("Error al actualizar la actividad:", error);
+    }
+  };
+
+  // Función para borrar una actividad
+  const handleDeleteActivity = async (id) => {
+    try {
+      console.log("Eliminando actividad con id:", id);
+      await deleteDoc(doc(db, "activities", id));
+      setActivities(prev => prev.filter(act => act.id !== id));
+    } catch (error) {
+      console.error("Error eliminando la actividad:", error);
     }
   };
 
@@ -116,7 +138,6 @@ const ActDash = () => {
           return;
         }
         console.log("Fetching activities for guide uid:", currentUser.uid);
-        // Obtén las actividades donde el campo "guideName" (uid) coincida con el usuario actual.
         const activitiesCollection = collection(db, 'activities');
         const activitiesQuery = query(activitiesCollection, where("guideName", "==", currentUser.uid));
         const activitiesSnapshot = await getDocs(activitiesQuery);
@@ -131,8 +152,6 @@ const ActDash = () => {
               const data = docSnap.data();
               const type = data.type || 'Hiking';
               const imageSrc = activityImages[type] || activityImages['default'];
-          
-              // Obtén el nombre real del guía
               let guideRealName = "Guía no asignado";
               try {
                 const userDocRef = doc(db, 'users', data.guideName);
@@ -148,7 +167,6 @@ const ActDash = () => {
               }
               console.log(`Activity ${docSnap.id} guideRealName:`, guideRealName);
               
-              // Fetch available dates for this activity
               let availableDates = [];
               let availableTimes = [];
               try {
@@ -186,16 +204,13 @@ const ActDash = () => {
                 console.error(`Error fetching dates for activity ${docSnap.id}:`, error);
               }
               
-              if (availableDates.length === 0 && data.date) {
-                if (data.date.toDate) {
-                  availableDates.push(data.date.toDate());
-                } else if (typeof data.date === 'string') {
-                  availableDates.push(new Date(data.date));
-                }
-                if (data.time) {
-                  availableTimes.push(data.time);
-                }
-              }
+              // Si no hay fechas en la subcolección se usa la fecha y hora principales
+              const rawDate = data.date
+                ? (typeof data.date.toDate === "function"
+                  ? data.date.toDate().toISOString().split("T")[0]
+                  : data.date)
+                : "";
+              const rawTime = data.time || "";
           
               return {
                 id: docSnap.id,
@@ -210,7 +225,9 @@ const ActDash = () => {
                 requirements: data.requirements || 'No hay requisitos específicos',
                 imageSrc,
                 availableDates,
-                availableTimes
+                availableTimes,
+                rawDate,
+                rawTime
               };
             })
           );
@@ -228,7 +245,6 @@ const ActDash = () => {
     fetchActivities();
   }, [currentUser, db]);
 
-  // Helper para formatear la fecha
   const formatDate = (date, time = null) => {
     if (!date) return 'Fechas flexibles';
     try {
@@ -242,18 +258,6 @@ const ActDash = () => {
     } catch (error) {
       console.error('Error formatting date:', error, date);
       return 'Fecha no disponible';
-    }
-  };
-
-  // Función para actualizar la actividad en la base de datos (para editar)
-  const handleActivityEdit = async (activityId, updatedData) => {
-    try {
-      const activityRef = doc(db, "activities", activityId);
-      await updateDoc(activityRef, updatedData);
-      console.log("Actividad actualizada en la DB");
-      setActivities(prevActivities => prevActivities.map(act => act.id === activityId ? { ...act, ...updatedData } : act));
-    } catch (error) {
-      console.error("Error al actualizar la actividad:", error);
     }
   };
 
@@ -291,45 +295,56 @@ const ActDash = () => {
         ) : (
           <div className="activities-grid">
             {activities.map(activity => {
-              let dateDisplay = 'Fechas flexibles';
-              if (activity.availableDates && activity.availableDates.length > 0) {
-                const schedule = activity.availableDates.map((date, i) => ({
-                  date,
-                  time: activity.availableTimes && activity.availableTimes[i] ? activity.availableTimes[i] : null
-                }));
-                const now = new Date();
-                const futureSchedule = schedule.filter(s => s.date > now);
-                if (futureSchedule.length > 0) {
-                  futureSchedule.sort((a, b) => a.date - b.date);
-                  const nearest = futureSchedule[0];
-                  dateDisplay = formatDate(nearest.date, nearest.time);
-                } else {
-                  schedule.sort((a, b) => b.date - a.date);
-                  const recent = schedule[0];
-                  dateDisplay = `Finalizado: ${formatDate(recent.date, recent.time)}`;
-                }
-              }
-              return (
-                <div key={activity.id} className="activity-card-container">
-                  <ActCard
-                    title={activity.title}
-                    imageSrc={activity.imageSrc}
-                    guideName={activity.guideName}
-                    rating={activity.rating}
-                    date={dateDisplay}
-                    onClick={() => navigate(`/activity/${activity.id}`, { state: activity })}
-                    onEditActivity={(updatedData) => handleActivityEdit(activity.id, updatedData)}
-                  />
-                </div>
-              );
-            })}
+  // Para mostrar en el card se usa un display formateado;
+  // En edición se utilizarán rawDate y rawTime
+  let dateDisplay = 'Fechas flexibles';
+  if (activity.availableDates && activity.availableDates.length > 0) {
+    const schedule = activity.availableDates.map((date, i) => ({
+      date,
+      time: activity.availableTimes && activity.availableTimes[i] ? activity.availableTimes[i] : null
+    }));
+    const now = new Date();
+    const futureSchedule = schedule.filter(s => s.date > now);
+    if (futureSchedule.length > 0) {
+      futureSchedule.sort((a, b) => a.date - b.date);
+      const nearest = futureSchedule[0];
+      dateDisplay = formatDate(nearest.date, nearest.time);
+    } else {
+      schedule.sort((a, b) => b.date - a.date);
+      const recent = schedule[0];
+      dateDisplay = `Finalizado: ${formatDate(recent.date, recent.time)}`;
+    }
+  }
+  return (
+    <div key={activity.id} className="activity-card-container">
+      <ActCard
+        id={activity.id}
+        title={activity.title}
+        imageSrc={activity.imageSrc}
+        guideName={activity.guideName}
+        rating={activity.rating}
+        date={dateDisplay}              // Para visualización
+        rawDate={activity.rawDate}        // Para edición
+        time={activity.rawTime}           // Para edición
+        capacity={activity.capacity}      // Se añaden los valores faltantes
+        description={activity.description}
+        duration={activity.duration}
+        price={activity.price}
+        requirements={activity.requirements}
+        type={activity.type}
+        onClick={() => navigate(`/activity/${activity.id}`, { state: activity })}
+        onEditActivity={(updatedData) => handleActivityEdit(activity.id, updatedData)}
+        onDeleteActivity={handleDeleteActivity}  // Se pasa la función de borrado
+      />
+    </div>
+  );
+})}
           </div>
         )}
       </main>
 
       <Footer />
 
-      {/* Modal de creación de actividad */}
       {showCreateModal && (
         <div className="modal-overlay">
           <div className="modal">

@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar, faUser, faCalendarAlt, faClock } from '@fortawesome/free-solid-svg-icons';
+import { Timestamp } from 'firebase/firestore';
 import '../../assets/styles/actGuideCard.css';
 
 const ActGuideCard = ({ 
+  id,              // Identificador único de la actividad
   title, 
   imageSrc, 
   guideName,
   rating = 0,
-  date = 'Fechas flexibles', // Puede incluir " a las " para tiempo
+  date = 'Fechas flexibles',  // Para visualización
+  rawDate = '',               // Para edición (YYYY-MM-DD)
+  time = '',                  // Para edición (HH:MM)
   capacity = '',
   description = '',
   duration = '',
@@ -16,15 +20,23 @@ const ActGuideCard = ({
   requirements = '',
   type = '',
   onClick, 
-  onEditActivity
+  onEditActivity,
+  onDeleteActivity  // Función de borrado recibida desde el componente padre
 }) => {
-  // Estado para mostrar/ocultar el modal
-  const [showEditModal, setShowEditModal] = useState(false);
+  console.log("ActGuideCard: id =", id);
 
-  // Estado para los datos del formulario de edición
+  // Para la visualización se prefiere rawDate (junto con time) si existe
+  const displayDate = rawDate 
+    ? `${rawDate}${time ? ` a las ${time}` : ''}` 
+    : date;
+  // Comprueba si displayDate contiene " a las "
+  const hasTimeInfo = displayDate && displayDate.includes(' a las ');
+
+  const [showEditModal, setShowEditModal] = useState(false);
   const [editData, setEditData] = useState({
     title: '',
     date: '',
+    time: '',
     rating: 0,
     capacity: '',
     description: '',
@@ -34,12 +46,12 @@ const ActGuideCard = ({
     type: ''
   });
 
-  // Función que valida si los datos actuales (provenientes de las props) coinciden con editData.
-  // Si detecta diferencia, actualiza editData.
+  // Al abrir el modal se usan los valores raw (si existen) para edición
   const handleOpenModal = () => {
-    const dataFromProps = {
+    setEditData({
       title,
-      date,
+      date: rawDate || date,
+      time: time,
       rating,
       capacity,
       description,
@@ -47,44 +59,58 @@ const ActGuideCard = ({
       price,
       requirements,
       type
-    };
-
-    let needToUpdate = false;
-    for (const key in dataFromProps) {
-      if (dataFromProps[key] !== editData[key]) {
-        needToUpdate = true;
-        break;
-      }
-    }
-    
-    if (needToUpdate) {
-      console.log("Actualizando datos del modal porque difieren de las props");
-      setEditData(dataFromProps);
-    }
+    });
     setShowEditModal(true);
   };
 
-  // Actualiza editData conforme el usuario modifique los inputs
   const handleModalChange = (e) => {
     const { name, value } = e.target;
     setEditData(prev => ({ ...prev, [name]: value }));
   };
 
-  // Guarda los cambios y llama a onEditActivity del componente padre
   const handleSave = async () => {
-    console.log("Guardando cambios con datos:", editData);
+    // Prepara el nuevo objeto actualizando la fecha mediante date+time a Timestamp
+    const updatedData = { ...editData };
+    if (editData.date) {
+      const dateTimeStr = editData.time ? `${editData.date} ${editData.time}` : editData.date;
+      updatedData.date = Timestamp.fromDate(new Date(dateTimeStr));
+    } else {
+      updatedData.date = null;
+    }
+    console.log("Guardando cambios con datos:", updatedData);
     if (onEditActivity) {
       try {
-        await onEditActivity(editData);
+        await onEditActivity(updatedData);
         console.log("Actualización exitosa");
+        window.location.reload();
       } catch (error) {
-        console.error("Error actualizando la actividad", error);
+        console.error("Error actualizando la actividad:", error);
       }
+    } else {
+      console.error("onEditActivity no está definido");
     }
     setShowEditModal(false);
   };
 
-  // Renderiza las estrellas para el rating
+  const handleDelete = async () => {
+    console.log("Iniciando borrado de actividad con id:", id);
+    if (window.confirm("¿Estás seguro de que deseas borrar esta actividad?")) {
+      if (onDeleteActivity) {
+        try {
+          await onDeleteActivity(id);
+          console.log("Actividad borrada exitosamente");
+          setShowEditModal(false);
+        } catch (error) {
+          console.error("Error borrando la actividad:", error);
+        }
+      } else {
+        console.error("No se ha definido onDeleteActivity");
+      }
+    } else {
+      console.log("Borrado cancelado");
+    }
+  };
+
   const renderStars = (rating) => {
     const stars = [];
     const fullStars = Math.floor(rating);
@@ -120,8 +146,6 @@ const ActGuideCard = ({
     return stars;
   };
 
-  const hasTimeInfo = date && date.includes(' a las ');
-
   return (
     <>
       <div className="act-card">
@@ -135,20 +159,19 @@ const ActGuideCard = ({
         <div className="act-card-content">
           <h3 className="act-card-title">{title}</h3>
           
-          {/* Información de fecha y hora */}
           <div className="act-card-schedule">
             <div className="act-card-date-row">
               <FontAwesomeIcon icon={faCalendarAlt} className="schedule-icon" />
               {hasTimeInfo ? (
                 <div className="date-time-info">
-                  <span className="date-part">{date.split(' a las ')[0]}</span>
+                  <span className="date-part">{displayDate.split(' a las ')[0]}</span>
                   <div className="time-part">
                     <FontAwesomeIcon icon={faClock} className="schedule-icon time-icon" />
-                    <span>{date.split(' a las ')[1]}</span>
+                    <span>{displayDate.split(' a las ')[1]}</span>
                   </div>
                 </div>
               ) : (
-                <span>{date}</span>
+                <span>{displayDate}</span>
               )}
             </div>
           </div>
@@ -159,7 +182,6 @@ const ActGuideCard = ({
               <span>{guideName || 'Guía no asignado'}</span>
             </div>
             
-            {/* Contenedor para el rating y el botón de editar */}
             <div className="act-card-rating" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <div className="stars-container">
                 {renderStars(rating)}
@@ -174,7 +196,6 @@ const ActGuideCard = ({
             </div>
           </div>
           
-          {/* Botón "Ver detalles de la actividad" */}
           <div className="act-card-button-container">
             <button 
               className="act-card-btn"
@@ -207,6 +228,17 @@ const ActGuideCard = ({
                 name="date" 
                 value={editData.date} 
                 onChange={handleModalChange} 
+                placeholder="YYYY-MM-DD"
+              />
+            </label>
+            <label>
+              Hora:
+              <input 
+                type="text" 
+                name="time" 
+                value={editData.time} 
+                onChange={handleModalChange} 
+                placeholder="HH:MM"
               />
             </label>
             <label>
@@ -223,7 +255,7 @@ const ActGuideCard = ({
               />
             </label>
             <label>
-              Capacity:
+              Capacidad:
               <input 
                 type="text" 
                 name="capacity" 
@@ -232,7 +264,7 @@ const ActGuideCard = ({
               />
             </label>
             <label>
-              Description:
+              Descripción:
               <textarea 
                 name="description" 
                 value={editData.description} 
@@ -240,7 +272,7 @@ const ActGuideCard = ({
               ></textarea>
             </label>
             <label>
-              Duration:
+              Duración:
               <input 
                 type="text" 
                 name="duration" 
@@ -249,7 +281,7 @@ const ActGuideCard = ({
               />
             </label>
             <label>
-              Price:
+              Precio:
               <input 
                 type="number" 
                 name="price" 
@@ -258,7 +290,7 @@ const ActGuideCard = ({
               />
             </label>
             <label>
-              Requirements:
+              Requerimientos:
               <textarea 
                 name="requirements" 
                 value={editData.requirements} 
@@ -266,7 +298,7 @@ const ActGuideCard = ({
               ></textarea>
             </label>
             <label>
-              Type:
+              Tipo:
               <input 
                 type="text" 
                 name="type" 
@@ -277,6 +309,7 @@ const ActGuideCard = ({
             <div className="modal-buttons">
               <button onClick={handleSave}>Guardar</button>
               <button onClick={() => setShowEditModal(false)}>Cancelar</button>
+              <button onClick={handleDelete} className="delete-btn">Borrar actividad</button>
             </div>
           </div>
         </div>
