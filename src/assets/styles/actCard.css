@@ -161,6 +161,160 @@
 .act-card-btn:hover .arrow-icon {
   transform: translateX(4px);
 }
+/* Add these styles to c:\Users\Santiago\Desktop\ag\src\assets\styles\actCard.css */
+
+/* Date and time schedule styles */
+/* Add to c:\Users\Santiago\Desktop\ag\src\assets\styles\actCard.css */
+
+.act-card-schedule {
+  margin: 0.8rem 0;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+}
+
+.act-card-date-row {
+  display: flex;
+  align-items: flex-start;
+}
+
+.schedule-icon {
+  flex-shrink: 0;
+  margin-right: 0.6rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1rem;
+}
+
+.date-time-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.time-part {
+  display: flex;
+  align-items: center;
+  margin-top: 0.3rem;
+  margin-left: 0.3rem;
+}
+
+.time-icon {
+  font-size: 0.9rem;
+  margin-right: 0.4rem;
+}
+
+/* Update existing styles to accommodate the new elements */
+.act-card-content {
+  padding: 1.2rem;
+  background-color: #3c5c33;
+  color: white;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.act-card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0 0 0.6rem 0;
+  color: white;
+}
+
+.act-card-info {
+  margin: 0.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Style adjustments for better spacing */
+.act-card-guide {
+  display: flex;
+  align-items: center;
+}
+
+.guide-icon {
+  margin-right: 0.6rem;
+}
+
+.act-card-rating {
+  display: flex;
+  align-items: center;
+}
+
+.stars-container {
+  display: flex;
+  align-items: center;
+}
+
+.star-filled {
+  color: #ffb400;
+  margin-right: 3px;
+}
+
+.star-outline {
+  color: rgba(255, 255, 255, 0.3);
+  margin-right: 3px;
+}
+
+.star-half-container {
+  position: relative;
+  display: inline-block;
+  margin-right: 3px;
+}
+
+.star-half-container .star-outline {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.star-half-container .half {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  width: 50%;
+}
+
+.rating-number {
+  margin-left: 0.5rem;
+  font-weight: 600;
+}
+
+/* Button styles */
+.act-card-button-container {
+  margin-top: auto;
+  padding-top: 1rem;
+}
+
+.act-card-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.act-card-btn:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+.arrow-icon {
+  margin-left: 0.5rem;
+  transition: transform 0.2s ease;
+}
+
+.act-card-btn:hover .arrow-icon {
+  transform: translateX(3px);
+}
+
 
 .arrow-icon {
   display: inline-flex;

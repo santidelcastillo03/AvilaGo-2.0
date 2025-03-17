@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faStar, faUser, faCalendarAlt, faClock } from '@fortawesome/free-solid-svg-icons';
 import '../../assets/styles/actCard.css';
 
 const ActCard = ({ 
@@ -8,13 +8,11 @@ const ActCard = ({
   imageSrc, 
   guideName,
   rating = 0,
+  date = 'Fechas flexibles', // This now contains the formatted date with time if available
   onClick 
 }) => {
-  // Generate star rating display - improved rendering
-  // Only the renderStars function
-
-// Generate star rating display with working half stars
-const renderStars = (rating) => {
+  // Generate star rating display with working half stars
+  const renderStars = (rating) => {
     const stars = [];
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
@@ -55,6 +53,10 @@ const renderStars = (rating) => {
     
     return stars;
   };
+
+  // Check if date includes time information
+  const hasTimeInfo = date && date.includes(' a las ');
+
   return (
     <div className="act-card">
       <div className="act-card-img-container">
@@ -66,6 +68,26 @@ const renderStars = (rating) => {
       </div>
       <div className="act-card-content">
         <h3 className="act-card-title">{title}</h3>
+        
+        {/* Date information with separate icon for time if needed */}
+        <div className="act-card-schedule">
+          <div className="act-card-date-row">
+            <FontAwesomeIcon icon={faCalendarAlt} className="schedule-icon" />
+            {hasTimeInfo ? (
+              // If date contains time, separate and display with appropriate icons
+              <div className="date-time-info">
+                <span className="date-part">{date.split(' a las ')[0]}</span>
+                <div className="time-part">
+                  <FontAwesomeIcon icon={faClock} className="schedule-icon time-icon" />
+                  <span>{date.split(' a las ')[1]}</span>
+                </div>
+              </div>
+            ) : (
+              // Otherwise just display the date string
+              <span>{date}</span>
+            )}
+          </div>
+        </div>
         
         <div className="act-card-info">
           <div className="act-card-guide">
