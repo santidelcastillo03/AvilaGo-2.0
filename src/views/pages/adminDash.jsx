@@ -67,7 +67,7 @@ const AdminDashboard = () => {
             </div>
             <button 
               className="dashboard-button"
-              onClick={() => handleNavigation('/admin/activities')}
+              onClick={() => handleNavigation('/activitydashboard')}
             >
               Gestionar Actividades
             </button>

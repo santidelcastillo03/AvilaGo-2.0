@@ -1,6 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getFirestore, collection, query, where, getDocs, doc, deleteDoc, updateDoc, getDoc, addDoc, Timestamp } from 'firebase/firestore';
+import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  deleteDoc,
+  updateDoc,
+  getDoc,
+  addDoc,
+  Timestamp
+} from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
@@ -33,6 +45,7 @@ const ActDash = () => {
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [userRole, setUserRole] = useState(null); // Nuevo estado para el rol del usuario
 
   // Estado para el modal de creación de actividad
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -52,7 +65,7 @@ const ActDash = () => {
 
   const handleCreateModalChange = (e) => {
     const { name, value } = e.target;
-    setNewActivityData(prev => ({ ...prev, [name]: value }));
+    setNewActivityData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleCreateActivity = async () => {
@@ -112,7 +125,11 @@ const ActDash = () => {
       const activityRef = doc(db, "activities", activityId);
       await updateDoc(activityRef, updatedData);
       console.log("Actividad actualizada en la DB");
-      setActivities(prevActivities => prevActivities.map(act => act.id === activityId ? { ...act, ...updatedData } : act));
+      setActivities(prevActivities =>
+        prevActivities.map((act) =>
+          act.id === activityId ? { ...act, ...updatedData } : act
+        )
+      );
     } catch (error) {
       console.error("Error al actualizar la actividad:", error);
     }
@@ -137,16 +154,32 @@ const ActDash = () => {
           setLoading(false);
           return;
         }
-        console.log("Fetching activities for guide uid:", currentUser.uid);
-        const activitiesCollection = collection(db, 'activities');
-        const activitiesQuery = query(activitiesCollection, where("guideName", "==", currentUser.uid));
-        const activitiesSnapshot = await getDocs(activitiesQuery);
+  
+        // Obtén el rol del usuario desde Firestore
+        const userDocRef = doc(db, 'users', currentUser.uid);
+        const userDocSnap = await getDoc(userDocRef);
+        let role = null;
+        if (userDocSnap.exists()) {
+          role = userDocSnap.data().role;
+          setUserRole(role); // Guarda el rol en el estado
+        } else {
+          console.log('No se encontró documento para el usuario');
+        }
         
+        const isAdmin = role === 'admin';
+        console.log("Fetching activities for user:", currentUser.uid, "isAdmin:", isAdmin);
+  
+        const activitiesCollection = collection(db, 'activities');
+        const activitiesQuery = isAdmin
+          ? query(activitiesCollection)  // Carga todas las actividades si es admin
+          : query(activitiesCollection, where("guideName", "==", currentUser.uid));
+  
+        const activitiesSnapshot = await getDocs(activitiesQuery);
+  
         if (activitiesSnapshot.empty) {
-          console.log('No activities found for this guide');
+          console.log('No activities found');
           setActivities([]);
         } else {
-          console.log("Activities found:", activitiesSnapshot.size);
           const activitiesData = await Promise.all(
             activitiesSnapshot.docs.map(async (docSnap) => {
               const data = docSnap.data();
@@ -173,7 +206,6 @@ const ActDash = () => {
                 const datesCollectionRef = collection(db, 'activities', docSnap.id, 'dates');
                 const datesSnapshot = await getDocs(datesCollectionRef);
                 if (!datesSnapshot.empty) {
-                  console.log(`Found ${datesSnapshot.size} dates for activity ${docSnap.id}`);
                   datesSnapshot.forEach(dateDoc => {
                     const dateData = dateDoc.data();
                     if (dateData.date) {
@@ -204,7 +236,6 @@ const ActDash = () => {
                 console.error(`Error fetching dates for activity ${docSnap.id}:`, error);
               }
               
-              // Si no hay fechas en la subcolección se usa la fecha y hora principales
               const rawDate = data.date
                 ? (typeof data.date.toDate === "function"
                   ? data.date.toDate().toISOString().split("T")[0]
@@ -241,7 +272,7 @@ const ActDash = () => {
         setLoading(false);
       }
     };
-    
+  
     fetchActivities();
   }, [currentUser, db]);
 
@@ -266,17 +297,20 @@ const ActDash = () => {
   return (
     <div className="activities-container">
       <Header />
-
+  
       <div className="activities-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <h1 className="activities-title">Mis Actividades como Guía</h1>
-        <button 
-          className="create-activity-btn"
-          onClick={() => setShowCreateModal(true)}
-        >
-          Crear Actividad
-        </button>
+        {/* Si el usuario no es admin, se muestra el botón de crear */}
+        {userRole !== 'admin' && (
+           <button 
+             className="create-activity-btn"
+             onClick={() => setShowCreateModal(true)}
+           >
+             Crear Actividad
+           </button>
+        )}
       </div>
-
+  
       <main className="activities-main">
         {loading ? (
           <div className="loading-container">
@@ -295,56 +329,54 @@ const ActDash = () => {
         ) : (
           <div className="activities-grid">
             {activities.map(activity => {
-  // Para mostrar en el card se usa un display formateado;
-  // En edición se utilizarán rawDate y rawTime
-  let dateDisplay = 'Fechas flexibles';
-  if (activity.availableDates && activity.availableDates.length > 0) {
-    const schedule = activity.availableDates.map((date, i) => ({
-      date,
-      time: activity.availableTimes && activity.availableTimes[i] ? activity.availableTimes[i] : null
-    }));
-    const now = new Date();
-    const futureSchedule = schedule.filter(s => s.date > now);
-    if (futureSchedule.length > 0) {
-      futureSchedule.sort((a, b) => a.date - b.date);
-      const nearest = futureSchedule[0];
-      dateDisplay = formatDate(nearest.date, nearest.time);
-    } else {
-      schedule.sort((a, b) => b.date - a.date);
-      const recent = schedule[0];
-      dateDisplay = `Finalizado: ${formatDate(recent.date, recent.time)}`;
-    }
-  }
-  return (
-    <div key={activity.id} className="activity-card-container">
-      <ActCard
-        id={activity.id}
-        title={activity.title}
-        imageSrc={activity.imageSrc}
-        guideName={activity.guideName}
-        rating={activity.rating}
-        date={dateDisplay}              // Para visualización
-        rawDate={activity.rawDate}        // Para edición
-        time={activity.rawTime}           // Para edición
-        capacity={activity.capacity}      // Se añaden los valores faltantes
-        description={activity.description}
-        duration={activity.duration}
-        price={activity.price}
-        requirements={activity.requirements}
-        type={activity.type}
-        onClick={() => navigate(`/activity/${activity.id}`, { state: activity })}
-        onEditActivity={(updatedData) => handleActivityEdit(activity.id, updatedData)}
-        onDeleteActivity={handleDeleteActivity}  // Se pasa la función de borrado
-      />
-    </div>
-  );
-})}
+              let dateDisplay = 'Fechas flexibles';
+              if (activity.availableDates && activity.availableDates.length > 0) {
+                const schedule = activity.availableDates.map((date, i) => ({
+                  date,
+                  time: activity.availableTimes && activity.availableTimes[i] ? activity.availableTimes[i] : null
+                }));
+                const now = new Date();
+                const futureSchedule = schedule.filter(s => s.date > now);
+                if (futureSchedule.length > 0) {
+                  futureSchedule.sort((a, b) => a.date - b.date);
+                  const nearest = futureSchedule[0];
+                  dateDisplay = formatDate(nearest.date, nearest.time);
+                } else {
+                  schedule.sort((a, b) => b.date - a.date);
+                  const recent = schedule[0];
+                  dateDisplay = `Finalizado: ${formatDate(recent.date, recent.time)}`;
+                }
+              }
+              return (
+                <div key={activity.id} className="activity-card-container">
+                  <ActCard
+                    id={activity.id}
+                    title={activity.title}
+                    imageSrc={activity.imageSrc}
+                    guideName={activity.guideName}
+                    rating={activity.rating}
+                    date={dateDisplay}              // Para visualización
+                    rawDate={activity.rawDate}        // Para edición
+                    time={activity.rawTime}           // Para edición
+                    capacity={activity.capacity}      // Se añaden los valores faltantes
+                    description={activity.description}
+                    duration={activity.duration}
+                    price={activity.price}
+                    requirements={activity.requirements}
+                    type={activity.type}
+                    onClick={() => navigate(`/activity/${activity.id}`, { state: activity })}
+                    onEditActivity={(updatedData) => handleActivityEdit(activity.id, updatedData)}
+                    onDeleteActivity={handleDeleteActivity}  // Se pasa la función de borrado
+                  />
+                </div>
+              );
+            })}
           </div>
         )}
       </main>
-
+  
       <Footer />
-
+  
       {showCreateModal && (
         <div className="modal-overlay">
           <div className="modal">
