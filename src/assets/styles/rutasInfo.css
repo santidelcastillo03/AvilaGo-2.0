@@ -3,7 +3,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #f8f9fa;
+  background-color: #c17f45;
   color: #333;
   font-family: 'Poppins', 'Montserrat', Arial, sans-serif;
 }
@@ -22,7 +22,7 @@
   font-size: 38px;
   font-weight: 800;
   margin: 10px 0 30px;
-  color: #2c3e50;
+  color: #000000;
   position: relative;
   padding-bottom: 15px;
   text-align: center;

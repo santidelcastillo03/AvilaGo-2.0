@@ -1,0 +1,168 @@
+.activities-container {
+    background-image: url('../../assets/images/background1.png');
+    background-size: 100% auto; 
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    position: relative;
+    background-attachment: fixed;
+  }
+  
+  .activities-header {
+    padding: 2rem 2rem 1rem;
+  }
+  
+  .back-link-container {
+    margin-bottom: 1rem;
+  }
+  
+  .back-link {
+    background: none;
+    border: none;
+    color: #3b5731;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.5rem 0;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.2s ease;
+  }
+  
+  .back-link:hover {
+    color: #2d4425;
+    transform: translateX(-3px);
+  }
+  
+  .activities-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #1a1a1a;
+    margin: 0 0 1.5rem 0;
+  }
+  
+  .activities-main {
+    padding: 0 2rem 3rem;
+    flex: 1;
+  }
+  
+  .activities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 0;
+  }
+  
+  .loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3b5731;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .error-container {
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .error-message {
+    color: #e74c3c;
+    margin-bottom: 1rem;
+  }
+  
+  .error-container button {
+    background-color: #3b5731;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.8rem 1.5rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  
+  .no-activities-message {
+    text-align: center;
+    padding: 3rem 1rem;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    margin: 2rem auto;
+    max-width: 600px;
+  }
+  
+  .no-activities-message p {
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    color: #555;
+  }
+  
+  .request-activity-btn {
+    background-color: #3b5731;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 1rem 1.8rem;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .request-activity-btn:hover {
+    background-color: #2d4425;
+  }
+  
+  @media (max-width: 1200px) {
+    .activities-container {
+      background-size: cover; 
+      background-position: center 70%; 
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .activities-container {
+      background-position: center 60%; 
+    }
+    
+    .activities-grid {
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+    
+    .activities-title {
+      font-size: 2rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .activities-container {
+      background-position: center 50%; 
+      background-size: cover;
+    }
+    
+    .activities-title {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+    
+    .activities-header,
+    .activities-main {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+  }

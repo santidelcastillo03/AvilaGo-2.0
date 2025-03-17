@@ -8,6 +8,8 @@ import Payment from './views/pages/payment';
 import Gallery from './views/pages/gallery';
 import Profile from './views/pages/profile';
 import RutaInfo from './views/pages/rutasInfo';
+import Activities from './views/pages/activities';
+import ActInfo from './views/pages/actInfo';
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/rutasinfo" element={<RutaInfo />} /> 
+          <Route path="/activities/:routeId" element={<Activities />} />
+          <Route path="/activity/:activityId" element={<ActInfo />} />
           {/* Puedes agregar más rutas aquí según sea necesario */}
         </Routes>
       </Router>

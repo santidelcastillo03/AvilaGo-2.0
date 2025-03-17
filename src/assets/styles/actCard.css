@@ -1,0 +1,188 @@
+.act-card {
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #3c5c33;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding-top: 5px;
+}
+
+.act-card-img-container {
+  height: 180px;
+  width: 90%;
+  margin: 8px auto 0;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+}
+
+.act-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.act-card:hover .act-card-img {
+  transform: scale(1.05);
+}
+
+.act-card-content {
+  padding: 1rem;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.act-card-title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.act-card-info {
+  margin-bottom: 1.5rem;
+}
+
+.act-card-guide {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.guide-icon {
+  color: #ffffff;
+  margin-right: 0.5rem;
+}
+
+/* Add to c:\Users\Santiago\Desktop\ag\src\assets\styles\actCard.css */
+
+/* Update star rating styles */
+.stars-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .star-filled {
+    color: #ffb400;
+    margin-right: 3px;
+  }
+  
+  .star-outline {
+    color: rgba(255, 255, 255, 0.4);
+    margin-right: 3px;
+  }
+  
+  /* Half-star container */
+  .star-half-container {
+    position: relative;
+    display: inline-block;
+    margin-right: 3px;
+  }
+  
+  /* The half-filled star is clipped to show only 50% */
+  .star-half-container .half {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    overflow: hidden;
+  }
+  
+  .rating-number {
+    margin-left: 0.5rem;
+    font-weight: 600;
+    color: #ffffff;
+  }
+
+.act-card-button-container {
+  margin-top: auto;
+}
+
+.act-card-btn {
+  background: linear-gradient(135deg, #2b4923 0%, #1e3619 100%);
+  border: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.7rem 1.2rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-align: left;
+  border-radius: 6px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.08);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.5px;
+}
+
+.act-card-btn:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255,255,255,0.1);
+  transform: translateX(-100%);
+  transition: transform 0.4s ease;
+}
+
+.act-card-btn:hover {
+  background: linear-gradient(135deg, #324f29 0%, #243e1e 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 7px 14px rgba(0,0,0,0.15), 0 3px 6px rgba(0,0,0,0.1);
+}
+
+.act-card-btn:hover:before {
+  transform: translateX(0);
+}
+
+.act-card-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.act-card-btn .arrow-icon {
+  display: inline-block;
+  transition: transform 0.3s ease;
+  margin-left: 8px;
+}
+
+.act-card-btn:hover .arrow-icon {
+  transform: translateX(4px);
+}
+
+.arrow-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin-left: 8px;
+}
+
+@media (max-width: 768px) {
+  .act-card-img-container {
+    height: 160px;
+  }
+  
+  .act-card-content {
+    padding: 0.8rem;
+  }
+  
+  .act-card-title {
+    font-size: 1.3rem;
+    margin-bottom: 0.8rem;
+  }
+}
