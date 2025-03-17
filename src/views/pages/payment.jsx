@@ -1,128 +1,239 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import { useLocation, useNavigate } from "react-router-dom";
+import { getAuth } from "firebase/auth";
+import { getFirestore, addDoc, collection, serverTimestamp } from "firebase/firestore";
+import Header from '../components/Header.jsx';
 import '../../assets/styles/payment.css';
-import paypalLogo from '../../assets/images/paypallogo.png'; 
-import unimetLogo from '../../assets/images/logo.png'; 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronLeft, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 
-const Payment = ({ cartItems = [], totalPrice = "$$$" }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  
-  const handlePayment = () => {
-    console.log('Processing payment...');
-    // Add payment processing logic here
-  };
+const Payment = () => {
+    const location = useLocation();
+    const navigate = useNavigate();
+    const [activityData, setActivityData] = useState(null);
+    const [paymentSuccess, setPaymentSuccess] = useState(false);
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [user, setUser] = useState(null);
+    const [paypalLoaded, setPaypalLoaded] = useState(false);
 
-  // Default cart item if none provided
-  const defaultCartItem = {
-    title: "Yoga En Las Alturas",
-    date: "Domingo 27/02/25",
-    time: "3:30pm - 5:00pm",
-    image: "https://via.placeholder.com/150" // Using a placeholder image for now
-  };
+    // Check user authentication
+    useEffect(() => {
+        const auth = getAuth();
+        if (auth.currentUser) {
+            setUser(auth.currentUser);
+        } else {
+            // Redirect to login if not logged in
+            navigate('/login', { 
+                state: { 
+                    from: location.pathname,
+                    message: 'Inicia sesión para completar la reserva'
+                } 
+            });
+        }
+    }, [navigate, location.pathname]);
 
-  // Use provided cart items or default
-  const itemsToDisplay = cartItems.length > 0 ? cartItems : [defaultCartItem];
+    // Get activity data from location state
+    useEffect(() => {
+        if (location.state) {
+            setActivityData(location.state);
+        } else {
+            // Redirect if no activity data
+            navigate('/routes');
+        }
+    }, [location.state, navigate]);
 
-  return (
-    <div className="reservation-container">
-      <div className="close-button">×</div>
-      
-      <div className="logo-container">
-        <img src={unimetLogo} alt="UNIMET AvilaGo Logo" className="unimet-logo" />
-      </div>
-      
-      <div className="reservation-content">
-        <div className="left-panel">
-          <div className="reservation-header">
-            <h1>Confirmacion de Reserva</h1>
-          </div>
-          
-          <div className="features-list">
-            <div className="feature-item">
-              <div className="checkmark">✓</div>
-              <p>Rutas seguras con personal preparado</p>
-            </div>
-            <div className="feature-item">
-              <div className="checkmark">✓</div>
-              <p>Se parte de la comunidad</p>
-            </div>
-            <div className="feature-item">
-              <div className="checkmark">✓</div>
-              <p>Disfruta el viaje con amigos</p>
-            </div>
-            <div className="feature-item">
-              <div className="checkmark">✓</div>
-              <p>Conoce tu ciudad</p>
-            </div>
-          </div>
-          
-          <div className="cart-items">
-            {itemsToDisplay.map((item, index) => (
-              <div className="cart-item" key={index}>
-                <div className="item-image">
-                  <img src={item.image} alt={item.title} />
-                </div>
-                <div className="item-details">
-                  <h3>{item.title}</h3>
-                  <p>{item.date}</p>
-                  <p>{item.time}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          <div className="total-price">
-            <p>A PAGAR:</p>
-            <p className="price">{totalPrice}</p>
-          </div>
-        </div>
+    // PayPal configuration - Use sandbox client ID
+    const initialOptions = {
+        "client-id": "test", // Use PayPal sandbox client ID
+        currency: "USD",
+        intent: "capture",
+    }
+
+    // Create PayPal order
+    const createOrder = (data, actions) => {
+        console.log("Creating PayPal order");
+        const price = activityData?.price || 10;
+        return actions.order.create({
+            purchase_units: [
+                {
+                    description: `Reserva para ${activityData?.title || 'Actividad'}`,
+                    amount: {
+                        currency_code: "USD",
+                        value: price.toString(),
+                    },
+                },
+            ],
+        });
+    }
+
+    // Handle payment approval
+    const onApprove = (data, actions) => {
+        console.log("Payment approved", data);
+        setIsProcessing(true);
         
-        <div className="right-panel">
-          <div className="payment-section">
-            <div className="payment-header">
-              <div className="payment-icon">💳</div>
-              <h2>Paga seguro con:</h2>
-            </div>
+        // For sandbox testing, we can just simulate success
+        setTimeout(() => {
+            const saveReservation = async () => {
+                try {
+                    const auth = getAuth();
+                    const db = getFirestore();
+                    
+                    // Add reservation to Firestore
+                    await addDoc(collection(db, 'reservations'), {
+                        activityId: activityData.id || 'sample-id',
+                        userId: auth.currentUser.uid,
+                        userEmail: auth.currentUser.email,
+                        activityName: activityData?.title || 'Activity',
+                        price: activityData?.price || 10,
+                        paymentId: data.orderID || 'sandbox-payment',
+                        paymentStatus: 'completed',
+                        createdAt: serverTimestamp(),
+                        status: 'confirmed'
+                    });
+                    
+                    setPaymentSuccess(true);
+                    
+                    // Redirect after a delay
+                    setTimeout(() => {
+                        navigate('/reservations', { state: { paymentSuccess: true } });
+                    }, 3000);
+                    
+                } catch (error) {
+                    console.error("Error saving reservation: ", error);
+                    alert("Hubo un problema al guardar tu reserva. Por favor contacta a soporte.");
+                } finally {
+                    setIsProcessing(false);
+                }
+            };
             
-            <div className="payment-method">
-              <p>Paypal</p>
-              <div className="paypal-button">
-                <img src={paypalLogo} alt="PayPal" />
-              </div>
-            </div>
+            saveReservation();
+        }, 2000);
+        
+        return Promise.resolve(); // Simulate successful capture
+    }
+
+    // Handle cancel button
+    const handleCancel = () => {
+        navigate(-1);
+    }
+    
+    // Debug
+    useEffect(() => {
+        console.log("PayPal component rendered");
+    }, []);
+
+    return (
+        <div className="payment-page">
+            <Header />
             
-            <div className="login-form">
-              <div className="form-group">
-                <label>Email o usuario</label>
-                <input 
-                  type="text" 
-                  value={email} 
-                  onChange={(e) => setEmail(e.target.value)} 
-                />
-              </div>
-              
-              <div className="form-group">
-                <label>Contrasena</label>
-                <input 
-                  type="password" 
-                  value={password} 
-                  onChange={(e) => setPassword(e.target.value)} 
-                />
-              </div>
-              
-              <button className="login-button">
-                Ingresar
-              </button>
+            <div className="payment-container">
+                {paymentSuccess ? (
+                    <div className="payment-success-container">
+                        <div className="success-icon">
+                            <FontAwesomeIcon icon={faCheckCircle} />
+                        </div>
+                        <h2>¡Pago Exitoso!</h2>
+                        <p>Tu reserva ha sido confirmada.</p>
+                        <p className="redirect-message">Serás redirigido a tus reservaciones en unos segundos...</p>
+                    </div>
+                ) : (
+                    <>
+                        <h1>Reservar Actividad</h1>
+                        
+                        <button className="back-button" onClick={handleCancel}>
+                            <FontAwesomeIcon icon={faChevronLeft} />
+                            <span>Volver</span>
+                        </button>
+                        
+                        {activityData && (
+                            <div className="reservation-summary">
+                                <div className="activity-image-container">
+                                    <img 
+                                        src={activityData.imageSrc} 
+                                        alt={activityData.title} 
+                                        className="activity-thumbnail" 
+                                    />
+                                </div>
+                                
+                                <div className="reservation-details">
+                                    <h2>{activityData.title}</h2>
+                                    
+                                    <ul className="details-list">
+                                        <li>
+                                            <span className="detail-label">Guía:</span>
+                                            <span className="detail-value">{activityData.guideName}</span>
+                                        </li>
+                                        <li>
+                                            <span className="detail-label">Duración:</span>
+                                            <span className="detail-value">{activityData.duration}</span>
+                                        </li>
+                                        <li>
+                                            <span className="detail-label">Capacidad:</span>
+                                            <span className="detail-value">{activityData.capacity} personas</span>
+                                        </li>
+                                        <li className="price-detail">
+                                            <span className="detail-label">Precio Total:</span>
+                                            <span className="price-value">
+                                                ${activityData.price ? activityData.price.toFixed(2) : '10.00'} USD
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        )}
+                        
+                        <div className="payment-section">
+                            <h3>Selecciona tu método de pago</h3>
+                            
+                            <div className="paypal-container">
+                                {isProcessing ? (
+                                    <div className="processing-payment">
+                                        <div className="loading-spinner"></div>
+                                        <p>Procesando pago...</p>
+                                    </div>
+                                ) : (
+                                    <PayPalScriptProvider options={{
+                                        "client-id": "sb", // Use 'sb' for sandbox testing
+                                        currency: "USD",
+                                        components: "buttons"
+                                    }}>
+                                        <PayPalButtons 
+                                            forceReRender={[activityData?.price || 10]}
+                                            createOrder={createOrder} 
+                                            onApprove={onApprove}
+                                            style={{
+                                                layout: 'vertical',
+                                                color: 'gold',
+                                                shape: 'rect',
+                                                label: 'pay',
+                                                height: 40
+                                            }}
+                                        />
+                                    </PayPalScriptProvider>
+                                )}
+                                
+                                {/* Fallback button for development/testing */}
+                                <div className="test-payment-buttons">
+                                    <button 
+                                        className="simulate-payment-button" 
+                                        onClick={() => onApprove({orderID: 'test-order-123'}, {})}
+                                    >
+                                        Simular Pago (Solo para desarrollo)
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div className="payment-info">
+                                <p>Al proceder con el pago, aceptas los términos y condiciones de la actividad.</p>
+                                <p>Las cancelaciones deben realizarse con al menos 24 horas de anticipación.</p>
+                            </div>
+                        </div>
+                    </>
+                )}
             </div>
-            
-            <button className="payment-button" onClick={handlePayment}>
-              Pagar
-            </button>
-          </div>
         </div>
-      </div>
-    </div>
-  );
-};
+    );
+}
 
 export default Payment;

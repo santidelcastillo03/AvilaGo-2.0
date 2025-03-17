@@ -13,6 +13,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
+import { getAuth } from 'firebase/auth';
+import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import '../../assets/styles/actInfo.css';
 
 const ActivityInfo = () => {
@@ -20,6 +22,31 @@ const ActivityInfo = () => {
   const navigate = useNavigate();
   const [activityData, setActivityData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [userRole, setUserRole] = useState(null);
+  
+  // Check user authentication and role
+  useEffect(() => {
+    const auth = getAuth();
+    const checkUserRole = async () => {
+      if (auth.currentUser) {
+        setCurrentUser(auth.currentUser);
+        
+        // Get user role from Firestore
+        try {
+          const db = getFirestore();
+          const userDoc = await getDoc(doc(db, 'users', auth.currentUser.uid));
+          if (userDoc.exists()) {
+            setUserRole(userDoc.data().role);
+          }
+        } catch (err) {
+          console.error('Error getting user role:', err);
+        }
+      }
+    };
+    
+    checkUserRole();
+  }, []);
   
   // Simulated loading for smoother transition
   useEffect(() => {
@@ -88,6 +115,29 @@ const ActivityInfo = () => {
   const getActivityTypeIcon = (type) => {
     // You can expand this with more icons for different activity types
     return faHiking; // Default icon
+  };
+  
+  // Handle reservation button click
+  const handleReservation = () => {
+    if (!currentUser) {
+      // Redirect to login if not logged in
+      navigate('/login', { 
+        state: { 
+          from: location.pathname,
+          message: 'Inicia sesión para reservar esta actividad'
+        } 
+      });
+      return;
+    }
+    
+    if (userRole !== 'estudiante') {
+      // If user is not a student, show an alert
+      alert('Solo los estudiantes pueden reservar actividades');
+      return;
+    }
+    
+    // Navigate to payment page with activity data
+    navigate('/payment', { state: activityData });
   };
 
   return (
@@ -216,10 +266,17 @@ const ActivityInfo = () => {
               </div>
               
               <div className="activity-actions">
-                <button className="reserve-button">
+                <button 
+                  className="reserve-button"
+                  onClick={handleReservation}
+                  title={userRole !== 'estudiante' ? 'Solo estudiantes pueden reservar' : 'Reservar esta actividad'}
+                >
                   Reservar esta actividad
                   <FontAwesomeIcon icon={faChevronLeft} rotation={180} className="button-icon" />
                 </button>
+                {userRole && userRole !== 'estudiante' && (
+                  <p className="reservation-note">* Solo los estudiantes pueden realizar reservas</p>
+                )}
               </div>
             </div>
           </>
