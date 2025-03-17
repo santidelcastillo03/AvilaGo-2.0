@@ -11,6 +11,7 @@ import RutaInfo from './views/pages/rutasInfo';
 import Activities from './views/pages/activities';
 import ActInfo from './views/pages/actInfo';
 import AdminDashboard from './views/pages/adminDash';
+import ActDash from './views/pages/actDash';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
           <Route path="/activities/:routeId" element={<Activities />} />
           <Route path="/activity/:activityId" element={<ActInfo />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/activitydashboard" element={<ActDash />} />
           {/* Puedes agregar más rutas aquí según sea necesario */}
         </Routes>
       </Router>

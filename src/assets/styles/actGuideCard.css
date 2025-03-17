@@ -1,0 +1,427 @@
+.act-card {
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #3c5c33;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    padding-top: 5px;
+  }
+  
+  .act-card-img-container {
+    height: 180px;
+    width: 90%;
+    margin: 8px auto 0;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+  }
+  
+  .act-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  .act-card:hover .act-card-img {
+    transform: scale(1.05);
+  }
+  
+  .act-card-content {
+    padding: 1rem;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  
+  .act-card-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+  }
+  
+  .act-card-info {
+    margin-bottom: 1.5rem;
+  }
+  
+  .act-card-guide {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+  }
+  
+  .guide-icon {
+    color: #ffffff;
+    margin-right: 0.5rem;
+  }
+  
+  /* Add to c:\Users\Santiago\Desktop\ag\src\assets\styles\actCard.css */
+  
+  /* Update star rating styles */
+  .stars-container {
+      display: flex;
+      align-items: center;
+    }
+    
+    .star-filled {
+      color: #ffb400;
+      margin-right: 3px;
+    }
+    
+    .star-outline {
+      color: rgba(255, 255, 255, 0.4);
+      margin-right: 3px;
+    }
+    
+    /* Half-star container */
+    .star-half-container {
+      position: relative;
+      display: inline-block;
+      margin-right: 3px;
+    }
+    
+    /* The half-filled star is clipped to show only 50% */
+    .star-half-container .half {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 50%;
+      overflow: hidden;
+    }
+    
+    .rating-number {
+      margin-left: 0.5rem;
+      font-weight: 600;
+      color: #ffffff;
+    }
+  
+  .act-card-button-container {
+    margin-top: auto;
+  }
+  
+  .act-card-btn {
+    background: linear-gradient(135deg, #2b4923 0%, #1e3619 100%);
+    border: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.7rem 1.2rem;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-align: left;
+    border-radius: 6px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.08);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 0.5px;
+  }
+  
+  .act-card-btn:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.1);
+    transform: translateX(-100%);
+    transition: transform 0.4s ease;
+  }
+  
+  .act-card-btn:hover {
+    background: linear-gradient(135deg, #324f29 0%, #243e1e 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 7px 14px rgba(0,0,0,0.15), 0 3px 6px rgba(0,0,0,0.1);
+  }
+  
+  .act-card-btn:hover:before {
+    transform: translateX(0);
+  }
+  
+  .act-card-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .act-card-btn .arrow-icon {
+    display: inline-block;
+    transition: transform 0.3s ease;
+    margin-left: 8px;
+  }
+  
+  .act-card-btn:hover .arrow-icon {
+    transform: translateX(4px);
+  }
+  /* Add these styles to c:\Users\Santiago\Desktop\ag\src\assets\styles\actCard.css */
+  
+  /* Date and time schedule styles */
+  /* Add to c:\Users\Santiago\Desktop\ag\src\assets\styles\actCard.css */
+  
+  .act-card-schedule {
+    margin: 0.8rem 0;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.9rem;
+  }
+  
+  .act-card-date-row {
+    display: flex;
+    align-items: flex-start;
+  }
+  
+  .schedule-icon {
+    flex-shrink: 0;
+    margin-right: 0.6rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1rem;
+  }
+  
+  .date-time-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  
+  .time-part {
+    display: flex;
+    align-items: center;
+    margin-top: 0.3rem;
+    margin-left: 0.3rem;
+  }
+  
+  .time-icon {
+    font-size: 0.9rem;
+    margin-right: 0.4rem;
+  }
+  
+  /* Update existing styles to accommodate the new elements */
+  .act-card-content {
+    padding: 1.2rem;
+    background-color: #3c5c33;
+    color: white;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .act-card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0 0 0.6rem 0;
+    color: white;
+  }
+  
+  .act-card-info {
+    margin: 0.5rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  /* Style adjustments for better spacing */
+  .act-card-guide {
+    display: flex;
+    align-items: center;
+  }
+  
+  .guide-icon {
+    margin-right: 0.6rem;
+  }
+  
+  .act-card-rating {
+    display: flex;
+    align-items: center;
+  }
+  
+  .stars-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .star-filled {
+    color: #ffb400;
+    margin-right: 3px;
+  }
+  
+  .star-outline {
+    color: rgba(255, 255, 255, 0.3);
+    margin-right: 3px;
+  }
+  
+  .star-half-container {
+    position: relative;
+    display: inline-block;
+    margin-right: 3px;
+  }
+  
+  .star-half-container .star-outline {
+    color: rgba(255, 255, 255, 0.3);
+  }
+  
+  .star-half-container .half {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    width: 50%;
+  }
+  
+  .rating-number {
+    margin-left: 0.5rem;
+    font-weight: 600;
+  }
+  
+  /* Button styles */
+  .act-card-button-container {
+    margin-top: auto;
+    padding-top: 1rem;
+  }
+  
+  .act-card-btn {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .act-card-btn:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+  }
+  
+  .arrow-icon {
+    margin-left: 0.5rem;
+    transition: transform 0.2s ease;
+  }
+  
+  .act-card-btn:hover .arrow-icon {
+    transform: translateX(3px);
+  }
+  
+  
+  .arrow-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    margin-left: 8px;
+  }
+  
+  @media (max-width: 768px) {
+    .act-card-img-container {
+      height: 160px;
+    }
+    
+    .act-card-content {
+      padding: 0.8rem;
+    }
+    
+    .act-card-title {
+      font-size: 1.3rem;
+      margin-bottom: 0.8rem;
+    }
+  }
+  
+  .act-card-btn.edit-btn {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #ff9800; /* Color naranja */
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    color: rgb(255, 255, 255);
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.5rem;
+  }
+  
+  .act-card-btn.edit-btn:hover {
+    background-color: #e68a00; /* Naranja más oscuro al hacer hover */
+  }
+  
+  .act-card-btn.edit-btn .arrow-icon {
+    margin-left: 0.5rem;
+    transition: transform 0.2s ease;
+  }
+  
+  .act-card-btn.edit-btn:hover .arrow-icon {
+    transform: translateX(3px);
+  }
+
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+  }
+  
+  .modal {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 90%;
+  }
+  
+  .modal label {
+    display: block;
+    margin-bottom: 1rem;
+    color: white;
+  }
+  
+  .modal input {
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.25rem;
+  }
+  
+  .modal-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .modal-buttons button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .modal-buttons button:first-child {
+    background-color: #4caf50;
+    color: white;
+  }
+  
+  .modal-buttons button:last-child {
+    background-color: #f44336;
+    color: white;
+  }

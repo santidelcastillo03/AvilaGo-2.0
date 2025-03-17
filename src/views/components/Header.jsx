@@ -68,7 +68,7 @@ function Header() {
           )}
           
           {currentUser && userRole === 'guia' && (
-            <li><Link to="/activities">Mis Actividades</Link></li>
+            <li><Link to="/activitydashboard">Mis Actividades</Link></li>
           )}
         </ul>
       </nav>
