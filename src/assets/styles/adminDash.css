@@ -1,14 +1,12 @@
-AdminDashboard.css
-
 .dashboard-container {
   width: 100%;
   min-height: 100vh;
-  background-color: #e8d5bd;
-  font-family: Arial, sans-serif;
+  background-color: #F5F0E8; /* Lighter background similar to your app theme */
+  font-family: 'Poppins', Arial, sans-serif;
 }
 
 .dashboard-content {
-  padding: 20px;
+  padding: 40px 20px;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -16,14 +14,31 @@ AdminDashboard.css
 .dashboard-title {
   text-align: center;
   font-size: 32px;
-  font-weight: bold;
-  margin: 20px 0 40px;
+  font-weight: 700;
+  margin: 30px 0 50px;
+  color: #354c31; /* Green from your color scheme */
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+}
+
+.dashboard-title::after {
+  content: '';
+  display: block;
+  width: 100px;
+  height: 3px;
+  background-color: #c88646; /* Your accent color */
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 2px;
 }
 
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(3, 300px);
-  gap: 15px; /* 15px en ambas direcciones */
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
   justify-content: center;
   width: 100%;
   max-width: 1200px;
@@ -31,46 +46,68 @@ AdminDashboard.css
 }
 
 .dashboard-card {
-  background-color: #354c31;
-  border-radius: 10px;
-  padding: 20px;
+  background-color: #3c573a; /* Slightly lighter green for better contrast */
+  border-radius: 15px;
+  padding: 30px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  min-width: 300px;
   min-height: 300px;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
-.admin-profile {
-  grid-row: span 2;
-  grid-column: 4;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+.dashboard-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(90deg, #c88646, #d99b5c);
+}
+
+.dashboard-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
 }
 
 .icon-container {
-  width: 190px;
-  height: 190px;
+  width: 160px;
+  height: 160px;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 1px;
+  margin-bottom: 25px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  padding: 20px;
 }
 
 .dashboard-icon {
-  width: 170px;
-  height: 170px;
+  width: 100px;
+  height: 100px;
   background-color: white;
-  mask-size: cover;
-  -webkit-mask-size: cover;
+  mask-size: contain;
+  -webkit-mask-size: contain;
   mask-position: center;
   -webkit-mask-position: center;
   mask-repeat: no-repeat;
   -webkit-mask-repeat: no-repeat;
+  transition: transform 0.3s ease;
+}
+
+.dashboard-fontawesome-icon {
+  font-size: 80px;
+  color: white;
+  transition: transform 0.3s ease;
+}
+
+.dashboard-card:hover .dashboard-fontawesome-icon {
+  transform: scale(1.1);
 }
 
 .book-icon {
@@ -98,53 +135,71 @@ AdminDashboard.css
   -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>');
 }
 
-.info-icon {
-  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>');
-  -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>');
+/* Adding forum icon */
+.forum-icon {
+  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>');
+  -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>');
 }
 
 .dashboard-button {
   background-color: #c88646;
   color: white;
   border: none;
-  border-radius: 20px;
-  padding: 10px 20px;
-  font-size: 14px;
-  font-weight: bold;
+  border-radius: 25px;
+  padding: 14px 30px;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
   width: 100%;
-  max-width: 200px;
+  max-width: 220px;
   text-align: center;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
 }
 
 .dashboard-button:hover {
-  background-color: #a66b35;
+  background-color: #d99b5c;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
-.admin-info {
-  color: white;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
+.dashboard-button:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
-.admin-info h2 {
-  margin: 0 0 10px;
-  font-size: 24px;
+/* For mobile responsiveness */
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .dashboard-card {
+    min-height: 250px;
+  }
+  
+  .icon-container {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .dashboard-icon {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .dashboard-title {
+    font-size: 28px;
+    margin: 20px 0 40px;
+  }
 }
 
-.admin-name {
-  font-size: 18px;
-  margin: 5px 0;
-}
-
-.admin-id, .admin-number, .admin-role {
-  font-size: 14px;
-  margin: 5px 0;
-}
-
-.profile-button {
-  margin-top: 20px;
+/* For tablet sizes */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

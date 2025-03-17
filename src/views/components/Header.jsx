@@ -70,6 +70,10 @@ function Header() {
           {currentUser && userRole === 'guia' && (
             <li><Link to="/activitydashboard">Mis Actividades</Link></li>
           )}
+          
+          {currentUser && userRole === 'admin' && (
+            <li><Link to="/admin">Admin Dashboard</Link></li>
+          )}
         </ul>
       </nav>
       <div className="landing-nav-right">

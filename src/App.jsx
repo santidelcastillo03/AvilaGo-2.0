@@ -12,6 +12,7 @@ import Activities from './views/pages/activities';
 import ActInfo from './views/pages/actInfo';
 import AdminDashboard from './views/pages/adminDash';
 import ActDash from './views/pages/actDash';
+import ManageUsers from './views/pages/manageUser';
 
 function App() {
   return (
@@ -30,7 +31,7 @@ function App() {
           <Route path="/activity/:activityId" element={<ActInfo />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/activitydashboard" element={<ActDash />} />
-          {/* Puedes agregar más rutas aquí según sea necesario */}
+          <Route path="/admin/users" element={<ManageUsers />} />
         </Routes>
       </Router>
     </AuthProvider>

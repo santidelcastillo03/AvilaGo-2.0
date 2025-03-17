@@ -1,54 +1,100 @@
 import React from 'react';
 import '../../assets/styles/adminDash.css';
 import Header from '../components/Header.jsx';
+import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { 
+  faCalendarCheck, 
+  faUsers, 
+  faMapMarkedAlt, 
+  faHiking, 
+  faImages, 
+  faComments 
+} from '@fortawesome/free-solid-svg-icons';
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
+
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
+
   return (
     <div className="dashboard-container">
       <Header />
       <div className="dashboard-content">
-        <h1 className="dashboard-title">ADMIN DASHBOARD</h1>
+        <h1 className="dashboard-title">PANEL DE ADMINISTRACIÓN</h1>
         <div className="dashboard-grid">
           <div className="dashboard-card">
             <div className="icon-container">
-              <i className="dashboard-icon book-icon"></i>
+              <FontAwesomeIcon icon={faCalendarCheck} className="dashboard-fontawesome-icon" />
             </div>
-            <button className="dashboard-button">Gestionar Reservas</button>
+            <button 
+              className="dashboard-button"
+              onClick={() => handleNavigation('/admin/reservations')}
+            >
+              Gestionar Reservas
+            </button>
           </div>
           
           <div className="dashboard-card">
             <div className="icon-container">
-              <i className="dashboard-icon user-icon"></i>
+              <FontAwesomeIcon icon={faUsers} className="dashboard-fontawesome-icon" />
             </div>
-            <button className="dashboard-button">Gestionar Usuarios</button>
+            <button 
+              className="dashboard-button"
+              onClick={() => handleNavigation('/admin/users')}
+            >
+              Gestionar Usuarios
+            </button>
           </div>
           
           <div className="dashboard-card">
             <div className="icon-container">
-              <i className="dashboard-icon route-icon"></i>
+              <FontAwesomeIcon icon={faMapMarkedAlt} className="dashboard-fontawesome-icon" />
             </div>
-            <button className="dashboard-button">Gestionar Ruta</button>
+            <button 
+              className="dashboard-button"
+              onClick={() => handleNavigation('/admin/routes')}
+            >
+              Gestionar Rutas
+            </button>
           </div>
           
           <div className="dashboard-card">
             <div className="icon-container">
-              <i className="dashboard-icon activity-icon"></i>
+              <FontAwesomeIcon icon={faHiking} className="dashboard-fontawesome-icon" />
             </div>
-            <button className="dashboard-button">Gestionar Actividad</button>
+            <button 
+              className="dashboard-button"
+              onClick={() => handleNavigation('/admin/activities')}
+            >
+              Gestionar Actividades
+            </button>
           </div>
           
           <div className="dashboard-card">
             <div className="icon-container">
-              <i className="dashboard-icon gallery-icon"></i>
+              <FontAwesomeIcon icon={faImages} className="dashboard-fontawesome-icon" />
             </div>
-            <button className="dashboard-button">Gestionar Galeria</button>
+            <button 
+              className="dashboard-button"
+              onClick={() => handleNavigation('/admin/gallery')}
+            >
+              Gestionar Galería
+            </button>
           </div>
           
           <div className="dashboard-card">
             <div className="icon-container">
-              <i className="dashboard-icon info-icon"></i>
+              <FontAwesomeIcon icon={faComments} className="dashboard-fontawesome-icon" />
             </div>
-            <button className="dashboard-button">Gestionar Información</button>
+            <button 
+              className="dashboard-button"
+              onClick={() => handleNavigation('/admin/forum')}
+            >
+              Gestionar Foro
+            </button>
           </div>
         </div>
       </div>
