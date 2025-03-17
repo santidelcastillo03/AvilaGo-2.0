@@ -10,6 +10,7 @@ import Profile from './views/pages/profile';
 import RutaInfo from './views/pages/rutasInfo';
 import Activities from './views/pages/activities';
 import ActInfo from './views/pages/actInfo';
+import AdminDashboard from './views/pages/adminDash';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path="/rutasinfo" element={<RutaInfo />} /> 
           <Route path="/activities/:routeId" element={<Activities />} />
           <Route path="/activity/:activityId" element={<ActInfo />} />
+          <Route path="/admin" element={<AdminDashboard />} />
           {/* Puedes agregar más rutas aquí según sea necesario */}
         </Routes>
       </Router>
