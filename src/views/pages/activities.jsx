@@ -36,58 +36,76 @@ const Activities = () => {
       try {
         console.log("Fetching activities for route ID:", routeId);
         const db = getFirestore();
-        
-        // First, get the route info using the newer syntax
+
+        // Primero, obtenemos la info de la ruta
         const routeDocRef = doc(db, 'routes', routeId);
         const routeDocSnap = await getDoc(routeDocRef);
-        
+
         if (routeDocSnap.exists()) {
           console.log("Route data found:", routeDocSnap.data());
           setRouteInfo(routeDocSnap.data());
         } else {
           console.log("No route found with ID:", routeId);
         }
-        
-        // Then get activities for this route
+
+        // Luego, obtenemos las actividades para esta ruta
         const activitiesCollection = collection(db, 'activities');
-        const activitiesQuery = query(
-          activitiesCollection, 
-          where("routeId", "==", routeId)
-        );
-        
+        const activitiesQuery = query(activitiesCollection, where("routeId", "==", routeId));
         const activitiesSnapshot = await getDocs(activitiesQuery);
-        
+
         if (activitiesSnapshot.empty) {
           console.log('No activities found for this route');
           setActivities([]);
         } else {
           console.log("Activities found:", activitiesSnapshot.size);
-          const activitiesData = activitiesSnapshot.docs.map((doc) => {
-            const data = doc.data();
-            const type = data.type || 'Hiking';
-            const imageSrc = activityImages[type] || activityImages['default'];
-            
-            // Store guideId if available but don't use it for click functionality
-            const guideId = data.guideId || null;
-            
-            return {
-              id: doc.id,
-              title: data.title || 'Unnamed Activity',
-              description: data.description || '',
-              type,
-              guideName: data.guideName || 'Guía no asignado',
-              guideId, // Still store the ID for reference
-              rating: data.rating || 0,
-              // Removed date attribute as it will be handled by reservations
-              price: data.price || 0,
-              capacity: data.capacity || 'No especificada',
-              duration: data.duration || 'No especificada',
-              requirements: data.requirements || 'No hay requisitos específicos',
-              imageSrc,
-              routeId
-            };
-          });
+          const activitiesData = await Promise.all(
+            activitiesSnapshot.docs.map(async (docSnap) => {
+              const data = docSnap.data();
+              const type = data.type || 'Hiking';
+              const imageSrc = activityImages[type] || activityImages['default'];
           
+              // Log para verificar qué valor trae el campo guideName en la actividad
+              console.log(`Activity ${docSnap.id} data.guideName:`, data.guideName);
+          
+              // Aquí se asume que el campo "guideName" contiene el uid del usuario guía
+              const guideId = data.guideName;
+              let guideRealName = "Guía no asignado";
+              if (guideId && typeof guideId === 'string' && guideId.trim() !== "") {
+                try {
+                  const userDocRef = doc(db, 'users', guideId);
+                  const userDocSnap = await getDoc(userDocRef);
+                  if (userDocSnap.exists()) {
+                    const userData = userDocSnap.data();
+                    console.log(`User data for guideId ${guideId}:`, userData);
+                    // Asegúrate de que el documento de usuario contenga el campo 'name'
+                    guideRealName = userData.name || guideRealName;
+                  } else {
+                    console.log(`No se encontró usuario para el guideId ${guideId}`);
+                  }
+                } catch (error) {
+                  console.error(`Error fetching guide data for ID ${guideId}:`, error);
+                }
+              } else {
+                console.log(`El campo guideName está vacío o no es válido para la actividad ${docSnap.id}`);
+              }
+              console.log(`Activity ${docSnap.id} guideRealName:`, guideRealName);
+          
+              return {
+                id: docSnap.id,
+                title: data.title || 'Unnamed Activity',
+                description: data.description || '',
+                type,
+                guideName: guideRealName, // Se almacena el nombre real del guía obtenido de la colección "users"
+                rating: data.rating || 0,
+                price: data.price || 0,
+                capacity: data.capacity || 'No especificada',
+                duration: data.duration || 'No especificada',
+                requirements: data.requirements || 'No hay requisitos específicos',
+                imageSrc,
+                routeId
+              };
+            })
+          );
           console.log("Processed activity data:", activitiesData);
           setActivities(activitiesData);
         }
@@ -98,7 +116,7 @@ const Activities = () => {
         setLoading(false);
       }
     };
-    
+
     fetchActivities();
   }, [routeId]);
 
@@ -108,7 +126,7 @@ const Activities = () => {
   return (
     <div className="activities-container">
       <Header />
-      
+
       <div className="activities-header">
         <div className="back-link-container">
           <button 
@@ -122,7 +140,7 @@ const Activities = () => {
           Actividades{routeInfo ? ` en ${routeInfo.title}` : ''}
         </h1>
       </div>
-      
+
       <main className="activities-main">
         {loading ? (
           <div className="loading-container">
@@ -145,8 +163,7 @@ const Activities = () => {
                 <ActCard
                   title={activity.title}
                   imageSrc={activity.imageSrc}
-                  guideName={activity.guideName}
-                  // Not passing guideId to ActCard since we don't need click functionality
+                  guideName={activity.guideName}  // Se pasa el nombre real del guía
                   rating={activity.rating}
                   onClick={() => navigate(`/activity/${activity.id}`, { state: activity })}
                 />
@@ -155,7 +172,7 @@ const Activities = () => {
           </div>
         )}
       </main>
-      
+
       <Footer />
     </div>
   );
