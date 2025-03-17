@@ -29,7 +29,6 @@ function Footer() {
           <div className="footer-developers">
             <div className="developer-column">
               <p>Andres Da Corte</p>
-              <p>Massimo Restuccia</p>
             </div>
             <div className="developer-column">
               <p>Santiago Del Castillo</p>
