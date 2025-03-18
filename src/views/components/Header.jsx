@@ -120,7 +120,7 @@ function Header() {
           <li><Link to="/gallery">Galería</Link></li>
           
           {currentUser && userRole === 'estudiante' && (
-            <li><Link to="/reservations">Reservas</Link></li>
+            <li><Link to="/bookings">Reservas</Link></li>
           )}
           
           {currentUser && userRole === 'guia' && (

@@ -14,6 +14,7 @@ import AdminDashboard from './views/pages/adminDash';
 import ActDash from './views/pages/actDash';
 import ManageUsers from './views/pages/manageUser';
 import ManageRutas from './views/pages/manageRuta';
+import BookingsPage from './views/pages/bookings';
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
           <Route path="/activitydashboard" element={<ActDash />} />
           <Route path="/admin/users" element={<ManageUsers />} />
           <Route path="/admin/routes" element={<ManageRutas />} />
+          <Route path="/bookings" element={<BookingsPage />} />
         </Routes>
       </Router>
     </AuthProvider>
