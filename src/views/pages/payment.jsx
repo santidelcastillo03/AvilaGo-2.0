@@ -15,7 +15,6 @@ const Payment = () => {
     const [paymentSuccess, setPaymentSuccess] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
     const [user, setUser] = useState(null);
-    const [paypalLoaded, setPaypalLoaded] = useState(false);
 
     // Check user authentication
     useEffect(() => {
@@ -43,16 +42,8 @@ const Payment = () => {
         }
     }, [location.state, navigate]);
 
-    // PayPal configuration - Use sandbox client ID
-    const initialOptions = {
-        "client-id": "test", // Use PayPal sandbox client ID
-        currency: "USD",
-        intent: "capture",
-    }
-
     // Create PayPal order
     const createOrder = (data, actions) => {
-        console.log("Creating PayPal order");
         const price = activityData?.price || 10;
         return actions.order.create({
             purchase_units: [
@@ -64,16 +55,17 @@ const Payment = () => {
                     },
                 },
             ],
+            application_context: {
+                shipping_preference: 'NO_SHIPPING'
+            }
         });
     }
 
     // Handle payment approval
     const onApprove = (data, actions) => {
-        console.log("Payment approved", data);
         setIsProcessing(true);
         
-        // For sandbox testing, we can just simulate success
-        setTimeout(() => {
+        return actions.order.capture().then(function (details) {
             const saveReservation = async () => {
                 try {
                     const auth = getAuth();
@@ -86,7 +78,7 @@ const Payment = () => {
                         userEmail: auth.currentUser.email,
                         activityName: activityData?.title || 'Activity',
                         price: activityData?.price || 10,
-                        paymentId: data.orderID || 'sandbox-payment',
+                        paymentId: details.id || data.orderID,
                         paymentStatus: 'completed',
                         createdAt: serverTimestamp(),
                         status: 'confirmed'
@@ -108,20 +100,17 @@ const Payment = () => {
             };
             
             saveReservation();
-        }, 2000);
-        
-        return Promise.resolve(); // Simulate successful capture
+        }).catch(error => {
+            console.error("Error completing payment:", error);
+            setIsProcessing(false);
+            alert("Hubo un error al procesar el pago. Inténtalo de nuevo.");
+        });
     }
 
     // Handle cancel button
     const handleCancel = () => {
         navigate(-1);
     }
-    
-    // Debug
-    useEffect(() => {
-        console.log("PayPal component rendered");
-    }, []);
 
     return (
         <div className="payment-page">
@@ -186,42 +175,38 @@ const Payment = () => {
                         <div className="payment-section">
                             <h3>Selecciona tu método de pago</h3>
                             
-                            <div className="paypal-container">
+                            <div className="paypal-button-wrapper">
                                 {isProcessing ? (
                                     <div className="processing-payment">
                                         <div className="loading-spinner"></div>
                                         <p>Procesando pago...</p>
                                     </div>
                                 ) : (
-                                    <PayPalScriptProvider options={{
-                                        "client-id": "sb", // Use 'sb' for sandbox testing
-                                        currency: "USD",
-                                        components: "buttons"
-                                    }}>
-                                        <PayPalButtons 
-                                            forceReRender={[activityData?.price || 10]}
-                                            createOrder={createOrder} 
-                                            onApprove={onApprove}
-                                            style={{
-                                                layout: 'vertical',
-                                                color: 'gold',
-                                                shape: 'rect',
-                                                label: 'pay',
-                                                height: 40
-                                            }}
-                                        />
+                                    <PayPalScriptProvider 
+                                        options={{
+                                            "client-id": "sb",
+                                            currency: "USD",
+                                            components: "buttons",
+                                            disableFunding: "venmo,credit,paylater"
+                                        }}
+                                    >
+                                        <div className="paypal-button-container">
+                                            <PayPalButtons 
+                                                forceReRender={[activityData?.price || 10]}
+                                                createOrder={createOrder} 
+                                                onApprove={onApprove}
+                                                style={{
+                                                    layout: 'vertical',
+                                                    color: 'gold',
+                                                    shape: 'rect',
+                                                    label: 'paypal',
+                                                    height: 45
+                                                }}
+                                                fundingSource="paypal"
+                                            />
+                                        </div>
                                     </PayPalScriptProvider>
                                 )}
-                                
-                                {/* Fallback button for development/testing */}
-                                <div className="test-payment-buttons">
-                                    <button 
-                                        className="simulate-payment-button" 
-                                        onClick={() => onApprove({orderID: 'test-order-123'}, {})}
-                                    >
-                                        Simular Pago (Solo para desarrollo)
-                                    </button>
-                                </div>
                             </div>
                             
                             <div className="payment-info">

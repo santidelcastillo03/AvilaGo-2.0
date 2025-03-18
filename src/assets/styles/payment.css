@@ -208,6 +208,90 @@
     display: block !important;
 }
 
+/* Add these styles to your payment.css file */
+
+.paypal-button-wrapper {
+    max-width: 500px;
+    margin: 30px auto;
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.paypal-button-container {
+    min-height: 45px;
+    width: 100%;
+    margin: 0 auto;
+    position: relative;
+}
+
+/* Make sure PayPal buttons get proper spacing */
+.paypal-buttons {
+    min-height: 45px !important;
+    width: 100% !important;
+}
+
+/* Processing payment styling */
+.processing-payment {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 3px solid rgba(200, 134, 70, 0.2);
+    border-top-color: #c88646;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Success state styling */
+.payment-success-container {
+    padding: 40px 20px;
+    text-align: center;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.success-icon {
+    font-size: 3.5rem;
+    color: #4CAF50;
+    margin-bottom: 20px;
+}
+
+/* Ensure all containers have proper structure */
+.payment-page {
+    background-color: #F5F0E8;
+    min-height: 100vh;
+    padding-bottom: 50px;
+}
+
+.payment-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px 20px;
+}
+
+/* Make sure elements are centered and properly sized on mobile */
+@media (max-width: 768px) {
+    .paypal-button-wrapper {
+        width: 100%;
+        max-width: none;
+    }
+}
+
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
