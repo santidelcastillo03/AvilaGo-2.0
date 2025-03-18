@@ -1,10 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import '../../assets/styles/footer.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight, faPhone, faEnvelope, faMapMarkerAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { 
+  faArrowRight, 
+  faPhone, 
+  faEnvelope, 
+  faMapMarkerAlt, 
+  faTimes, 
+  faCheckCircle, 
+  faExclamationCircle,
+  faInfoCircle
+} from '@fortawesome/free-solid-svg-icons';
 
 function Footer() {
   const [showContactModal, setShowContactModal] = useState(false);
+  const [feedbackText, setFeedbackText] = useState('');
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState('success'); // 'success', 'error', or 'info'
+  const toastTimeoutRef = useRef(null);
   
   const openContactModal = (e) => {
     e.preventDefault();
@@ -14,14 +28,70 @@ function Footer() {
   const closeContactModal = () => {
     setShowContactModal(false);
   };
+  
+  const handleFeedbackChange = (e) => {
+    setFeedbackText(e.target.value);
+  };
+  
+  const showToastNotification = (message, type = 'success') => {
+    // Clear any existing timeout
+    if (toastTimeoutRef.current) {
+      clearTimeout(toastTimeoutRef.current);
+    }
+    
+    // Set toast message and show it
+    setToastMessage(message);
+    setToastType(type);
+    setShowToast(true);
+    
+    // Hide toast after 3 seconds
+    toastTimeoutRef.current = setTimeout(() => {
+      setShowToast(false);
+    }, 3000);
+  };
+  
+  const handleSubmitFeedback = () => {
+    if (feedbackText.trim() === '') {
+      showToastNotification('Por favor ingrese su comentario', 'error');
+      return;
+    }
+    
+    // Simulate sending feedback (not actually functional)
+    console.log('Feedback submitted:', feedbackText);
+    
+    // Show success message
+    showToastNotification('¡Gracias por su comentario!');
+    
+    // Clear input
+    setFeedbackText('');
+  };
+  
+  // Handle enter key press in feedback input
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSubmitFeedback();
+    }
+  };
+
+  // Handle About Us link click
+  const handleAboutUsClick = (e) => {
+    e.preventDefault();
+    showToastNotification('Sección "Acerca de Nosotros" en desarrollo', 'info');
+  };
+
+  // Handle FAQ link click
+  const handleFAQClick = (e) => {
+    e.preventDefault();
+    showToastNotification('Sección "Preguntas Frecuentes" en desarrollo', 'info');
+  };
 
   return (
     <footer className="landing-footer">
       <div className="footer-content">
         <div className="footer-links">
           <a href="#" onClick={openContactModal}>Contact us</a>
-          <a href="#">FAQ</a>
-          <a href="#">About us</a>
+          <a href="#" onClick={handleFAQClick}>FAQ</a>
+          <a href="#" onClick={handleAboutUsClick}>About us</a>
         </div>
 
         <div className="footer-developed">
@@ -37,8 +107,18 @@ function Footer() {
         </div>
 
         <div className="footer-feedback">
-          <input type="text" placeholder="Feedback" />
-          <button className="feedback-button">
+          <input 
+            type="text" 
+            placeholder="Feedback" 
+            value={feedbackText}
+            onChange={handleFeedbackChange}
+            onKeyPress={handleKeyPress}
+          />
+          <button 
+            className="feedback-button"
+            onClick={handleSubmitFeedback}
+            aria-label="Send feedback"
+          >
             <FontAwesomeIcon icon={faArrowRight} />
           </button>
         </div>
@@ -92,6 +172,26 @@ function Footer() {
                 title="Avila National Park Location"
               ></iframe>
             </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Toast Notification */}
+      {showToast && (
+        <div className={`toast-notification ${
+          toastType === 'success' ? 'toast-success' : 
+          toastType === 'error' ? 'toast-error' : 
+          'toast-info'}`}
+        >
+          <div className="toast-icon">
+            <FontAwesomeIcon icon={
+              toastType === 'success' ? faCheckCircle : 
+              toastType === 'error' ? faExclamationCircle : 
+              faInfoCircle
+            } />
+          </div>
+          <div className="toast-message">
+            {toastMessage}
           </div>
         </div>
       )}
