@@ -63,6 +63,9 @@ const ActDash = () => {
     routeId: ''
   });
 
+  // Nuevo estado para guardar las rutas (para el dropdown)
+  const [routes, setRoutes] = useState([]);
+
   const handleCreateModalChange = (e) => {
     const { name, value } = e.target;
     setNewActivityData((prev) => ({ ...prev, [name]: value }));
@@ -146,6 +149,7 @@ const ActDash = () => {
     }
   };
 
+  // Fetch activities y rol del usuario
   useEffect(() => {
     const fetchActivities = async () => {
       try {
@@ -161,7 +165,7 @@ const ActDash = () => {
         let role = null;
         if (userDocSnap.exists()) {
           role = userDocSnap.data().role;
-          setUserRole(role); // Guarda el rol en el estado
+          setUserRole(role);
         } else {
           console.log('No se encontró documento para el usuario');
         }
@@ -171,7 +175,7 @@ const ActDash = () => {
   
         const activitiesCollection = collection(db, 'activities');
         const activitiesQuery = isAdmin
-          ? query(activitiesCollection)  // Carga todas las actividades si es admin
+          ? query(activitiesCollection)
           : query(activitiesCollection, where("guideName", "==", currentUser.uid));
   
         const activitiesSnapshot = await getDocs(activitiesQuery);
@@ -275,6 +279,24 @@ const ActDash = () => {
   
     fetchActivities();
   }, [currentUser, db]);
+
+  // Fetch routes para el dropdown en el modal de crear actividad
+  useEffect(() => {
+    const fetchRoutes = async () => {
+      try {
+        const routesCollection = collection(db, 'routes');
+        const routesSnapshot = await getDocs(routesCollection);
+        const routesData = [];
+        routesSnapshot.forEach(docSnap => {
+          routesData.push({ id: docSnap.id, ...docSnap.data() });
+        });
+        setRoutes(routesData);
+      } catch (err) {
+        console.error('Error fetching routes for dropdown:', err);
+      }
+    };
+    fetchRoutes();
+  }, [db]);
 
   const formatDate = (date, time = null) => {
     if (!date) return 'Fechas flexibles';
@@ -418,14 +440,9 @@ const ActDash = () => {
                 onChange={handleCreateModalChange}
               >
                 <option value="">Selecciona una ruta</option>
-                <option value="1">Sabas Nieves</option>
-                <option value="2">Humboldt</option>
-                <option value="3">Pico Naiguatá</option>
-                <option value="4">Cruz de los Palmeros</option>
-                <option value="5">El Banquito</option>
-                <option value="6">Piedra del Indio</option>
-                <option value="7">Pico Oriental</option>
-                <option value="8">Antenas Avila</option>
+                {routes.map(route => (
+                  <option key={route.id} value={route.id}>{route.title}</option>
+                ))}
               </select>
             </label>
             <label>

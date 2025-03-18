@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getFirestore, collection, getDocs, query, orderBy, where, doc, getDoc } from 'firebase/firestore';
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  query,
+  doc,
+  getDoc,
+  addDoc,
+  deleteDoc,
+  updateDoc
+} from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
@@ -24,9 +34,25 @@ const ManageRutas = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOption, setSortOption] = useState({ field: 'name', direction: 'asc' });
-  const [firstDocument, setFirstDocument] = useState(null); // For debugging field names
+  const [firstDocument, setFirstDocument] = useState(null);
   
-  // Fetch routes directly on component mount - removed admin check temporarily for debugging
+  // Estados para modal de Añadir Ruta
+  const [showAddRouteModal, setShowAddRouteModal] = useState(false);
+  const [newRouteData, setNewRouteData] = useState({
+    title: '',
+    difficulty: '',
+    distance: '',
+    map: '',
+    about: ''
+  });
+
+  // Estados para modal de Editar Ruta
+  const [showEditRouteModal, setShowEditRouteModal] = useState(false);
+  const [editRouteData, setEditRouteData] = useState(null);
+  
+  const auth = getAuth();
+  const db = getFirestore();
+
   useEffect(() => {
     fetchRutas();
   }, []);
@@ -35,10 +61,8 @@ const ManageRutas = () => {
   const fetchRutas = async () => {
     setLoading(true);
     try {
-      const db = getFirestore();
       console.log("Fetching routes...");
       
-      // Check which collection name is used in your database
       const possibleCollections = ['routes', 'rutas', 'Rutas', 'Routes'];
       let rutasList = [];
       let collectionFound = false;
@@ -47,31 +71,25 @@ const ManageRutas = () => {
         try {
           console.log(`Trying collection: ${collectionName}`);
           const rutasCollection = collection(db, collectionName);
-          const rutasQuery = query(rutasCollection);  // Removed orderBy for now
+          const rutasQuery = query(rutasCollection);
           const rutasSnapshot = await getDocs(rutasQuery);
           
           if (!rutasSnapshot.empty) {
-            // Store the first document for field name inspection
             const firstDoc = rutasSnapshot.docs[0];
             setFirstDocument(firstDoc.data());
             console.log("First document fields:", firstDoc.data());
             
-            // Map the documents with field name detection
-            rutasList = rutasSnapshot.docs.map(doc => {
-              const data = doc.data();
-              // Collect all field names for debugging
-              console.log("Document fields for", doc.id, ":", Object.keys(data));
-              
-              // Try to map fields with possible alternatives
+            rutasList = rutasSnapshot.docs.map(docSnap => {
+              const data = docSnap.data();
+              console.log("Document fields for", docSnap.id, ":", Object.keys(data));
               return {
-                id: doc.id,
+                id: docSnap.id,
                 name: data.name || data.nombre || data.title || data.titulo || 'Sin nombre',
                 difficulty: data.difficulty || data.dificultad || data.nivel || 'fácil',
                 distance: data.distance || data.distancia || data.longitud || 'No especificada',
                 description: data.description || data.descripcion || data.desc || '',
                 imageUrl: data.imageUrl || data.imagen || data.image || data.imagePath || '',
-                // Add any other fields you need
-                ...data  // Include all original data for reference
+                ...data
               };
             });
             
@@ -81,7 +99,6 @@ const ManageRutas = () => {
           }
         } catch (innerErr) {
           console.log(`Error with collection ${collectionName}:`, innerErr);
-          // Continue to the next collection
         }
       }
       
@@ -90,7 +107,6 @@ const ManageRutas = () => {
         setError("No se encontraron rutas en la base de datos.");
       }
       
-      // Add a debug route if none found (for testing only)
       if (rutasList.length === 0) {
         console.log("Adding test route");
         rutasList = [
@@ -128,7 +144,6 @@ const ManageRutas = () => {
     }));
   };
   
-  // Get sort indicator
   const getSortIndicator = (field) => {
     if (sortOption.field === field) {
       return sortOption.direction === 'asc' ? ' ▲' : ' ▼';
@@ -136,57 +151,104 @@ const ManageRutas = () => {
     return '';
   };
   
-  // Navigate to add route page
+  // Abrir modal para agregar ruta
   const handleAddRoute = () => {
-    alert("Función para añadir ruta será implementada próximamente.");
+    setShowAddRouteModal(true);
+  };
+
+  // Manejar cambios en inputs del modal de agregar ruta
+  const handleNewRouteChange = (e) => {
+    const { name, value } = e.target;
+    setNewRouteData(prev => ({ ...prev, [name]: value }));
+  };
+
+  // Crear nueva ruta en Firestore
+  const handleCreateRoute = async () => {
+    try {
+      const routesCollection = collection(db, 'routes');
+      await addDoc(routesCollection, newRouteData);
+      console.log("Ruta creada exitosamente");
+      setShowAddRouteModal(false);
+      setNewRouteData({
+        title: '',
+        difficulty: '',
+        distance: '',
+        map: '',
+        about: ''
+      });
+      fetchRutas();
+    } catch (error) {
+      console.error("Error creando ruta:", error);
+    }
+  };
+  
+  // Abrir modal de edición y precargar datos de la ruta
+  const openEditRouteModal = (ruta) => {
+    setEditRouteData(ruta);
+    setShowEditRouteModal(true);
+  };
+
+  // Manejar cambios en inputs del modal de edición
+  const handleEditRouteChange = (e) => {
+    const { name, value } = e.target;
+    setEditRouteData(prev => ({ ...prev, [name]: value }));
+  };
+
+  // Actualizar la ruta en Firestore
+  const handleUpdateRoute = async () => {
+    try {
+      const routeRef = doc(db, 'routes', editRouteData.id);
+      // Excluir la propiedad id del objeto a actualizar
+      const { id, ...updateData } = editRouteData;
+      await updateDoc(routeRef, updateData);
+      console.log("Ruta actualizada:", editRouteData.id);
+      setShowEditRouteModal(false);
+      setEditRouteData(null);
+      fetchRutas();
+    } catch (error) {
+      console.error("Error actualizando ruta:", error);
+    }
+  };
+  
+  // Función para eliminar una ruta
+  const handleDeleteRoute = async (id, name) => {
+    if(window.confirm(`¿Estás seguro de eliminar la ruta "${name}"?`)) {
+      try {
+        await deleteDoc(doc(db, 'routes', id));
+        console.log("Ruta eliminada:", id);
+        fetchRutas();
+      } catch (error) {
+        console.error("Error eliminando ruta:", error);
+      }
+    }
   };
   
   // Filter and sort routes
   const filteredRutas = rutas
     .filter(ruta => {
       if (!searchTerm) return true;
-      
       const searchLower = searchTerm.toLowerCase();
       const nameMatch = ruta.name && ruta.name.toLowerCase().includes(searchLower);
       const descriptionMatch = ruta.description && ruta.description.toLowerCase().includes(searchLower);
-      
       return nameMatch || descriptionMatch;
     })
     .sort((a, b) => {
       const field = sortOption.field;
-      
-      // Check for undefined values
       const valueA = a[field] !== undefined ? a[field] : '';
       const valueB = b[field] !== undefined ? b[field] : '';
-      
       if (typeof valueA === 'string' && typeof valueB === 'string') {
         return sortOption.direction === 'asc' 
           ? valueA.localeCompare(valueB)
           : valueB.localeCompare(valueA);
       }
-      
-      // For boolean values (like active status)
-      if (typeof valueA === 'boolean' && typeof valueB === 'boolean') {
-        return sortOption.direction === 'asc'
-          ? valueA === valueB ? 0 : valueA ? -1 : 1
-          : valueA === valueB ? 0 : valueA ? 1 : -1;
-      }
-      
-      // For numeric values
       return sortOption.direction === 'asc'
         ? valueA - valueB
         : valueB - valueA;
     });
   
-  // Translate difficulty level
- // Fix the getDifficultyClass function to ensure it handles all cases correctly
-
-const getDifficultyClass = (difficulty) => {
+  const getDifficultyClass = (difficulty) => {
     if (!difficulty) return '';
-    
-    // Convert to lowercase for case-insensitive comparison
     const difficultyLower = typeof difficulty === 'string' ? difficulty.toLowerCase() : '';
-    
     const classMap = {
       'facil': 'difficulty-easy',
       'fácil': 'difficulty-easy',
@@ -201,19 +263,14 @@ const getDifficultyClass = (difficulty) => {
       'muy dificil': 'difficulty-hard',
       'muy difícil': 'difficulty-hard',
       'extremo': 'difficulty-very-hard',
-      'extrema': 'difficulty-very-hard',
+      'extrema': 'difficulty-very-hard'
     };
-    
-    return classMap[difficultyLower] || 'difficulty-moderate'; // Default to moderate if unknown
+    return classMap[difficultyLower] || 'difficulty-moderate';
   };
   
-  // Also update the translateDifficulty function for consistency
   const translateDifficulty = (difficulty) => {
     if (!difficulty) return 'No especificada';
-    
-    // Convert to lowercase for case-insensitive comparison
     const difficultyLower = typeof difficulty === 'string' ? difficulty.toLowerCase() : '';
-    
     const difficultyMap = {
       'facil': 'Fácil',
       'fácil': 'Fácil',
@@ -228,15 +285,10 @@ const getDifficultyClass = (difficulty) => {
       'muy dificil': 'Difícil',
       'muy difícil': 'Difícil',
       'extremo': 'Muy Difícil',
-      'extrema': 'Muy Difícil',
+      'extrema': 'Muy Difícil'
     };
-    
     return difficultyMap[difficultyLower] || difficulty;
   };
-  
-  // View route details
-    // View route details
-    
   
   return (
     <div className="manage-rutas-page">
@@ -348,10 +400,9 @@ const getDifficultyClass = (difficulty) => {
                             <td>{ruta.distance || 'No especificada'}</td>
                             <td>
                               <div className="action-buttons">
-                                
                                 <button 
                                   className="edit-button" 
-                                  onClick={() => handleEditRoute(ruta)}
+                                  onClick={() => openEditRouteModal(ruta)}
                                   title="Editar ruta"
                                 >
                                   <FontAwesomeIcon icon={faEdit} />
@@ -387,7 +438,121 @@ const getDifficultyClass = (difficulty) => {
         )}
       </div>
       
+      {/* Modal para agregar una nueva ruta */}
+      {showAddRouteModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Añadir Ruta</h2>
+            <label>
+              Título:
+              <input 
+                type="text" 
+                name="title" 
+                value={newRouteData.title} 
+                onChange={handleNewRouteChange} 
+              />
+            </label>
+            <label>
+              Dificultad:
+              <input 
+                type="text" 
+                name="difficulty" 
+                value={newRouteData.difficulty} 
+                onChange={handleNewRouteChange} 
+              />
+            </label>
+            <label>
+              Distancia:
+              <input 
+                type="text" 
+                name="distance" 
+                value={newRouteData.distance} 
+                onChange={handleNewRouteChange} 
+              />
+            </label>
+            <label>
+              Mapa:
+              <input 
+                type="text" 
+                name="map" 
+                value={newRouteData.map} 
+                onChange={handleNewRouteChange} 
+              />
+            </label>
+            <label>
+              About:
+              <input 
+                type="text" 
+                name="about" 
+                value={newRouteData.about} 
+                onChange={handleNewRouteChange} 
+              />
+            </label>
+            <div className="modal-buttons">
+              <button onClick={handleCreateRoute}>Crear Ruta</button>
+              <button onClick={() => setShowAddRouteModal(false)}>Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
       
+      {/* Modal para editar una ruta */}
+      {showEditRouteModal && editRouteData && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Editar Ruta</h2>
+            <label>
+              Título:
+              <input 
+                type="text" 
+                name="title" 
+                value={editRouteData.title} 
+                onChange={handleEditRouteChange} 
+              />
+            </label>
+            <label>
+              Dificultad:
+              <input 
+                type="text" 
+                name="difficulty" 
+                value={editRouteData.difficulty} 
+                onChange={handleEditRouteChange} 
+              />
+            </label>
+            <label>
+              Distancia:
+              <input 
+                type="text" 
+                name="distance" 
+                value={editRouteData.distance} 
+                onChange={handleEditRouteChange} 
+              />
+            </label>
+            <label>
+              Mapa:
+              <input 
+                type="text" 
+                name="map" 
+                value={editRouteData.map} 
+                onChange={handleEditRouteChange} 
+              />
+            </label>
+            <label>
+              About:
+              <input 
+                type="text" 
+                name="about" 
+                value={editRouteData.about} 
+                onChange={handleEditRouteChange} 
+              />
+            </label>
+            <div className="modal-buttons">
+              <button onClick={handleUpdateRoute}>Guardar Cambios</button>
+              <button onClick={() => { setShowEditRouteModal(false); setEditRouteData(null); }}>Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
