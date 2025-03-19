@@ -389,9 +389,9 @@ const BookingsPage = () => {
               </h2>
               
               {filteredPastBookings.length === 0 ? (
-                <div className="empty-bookings">
-                  <p>No tienes actividades pasadas.</p>
-                </div>
+  <div className="past-empty-bookings">
+    <p>No tienes actividades pasadas.</p>
+  </div>
               ) : (
                 <div className="bookings-grid past-grid">
                   {filteredPastBookings.map(booking => (

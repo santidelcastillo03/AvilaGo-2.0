@@ -10,11 +10,13 @@ import {
   faSearch, 
   faComments, 
   faEye, 
-  faUser
+  faUser,
+  faTimes
 } from '@fortawesome/free-solid-svg-icons';
 import '../../assets/styles/forum.css';
 
 const Forum = () => {
+  // Rest of your code remains unchanged
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   const [topics, setTopics] = useState([]);

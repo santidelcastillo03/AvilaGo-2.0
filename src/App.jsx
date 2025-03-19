@@ -17,6 +17,7 @@ import ManageRutas from './views/pages/manageRuta';
 import BookingsPage from './views/pages/bookings';
 import Forum from './views/pages/forum';
 import TopicDetail from './views/pages/TopicDetail';
+import InfoSection from './views/pages/infoSection';
 
 function App() {
   return (
@@ -41,7 +42,9 @@ function App() {
           <Route path="/bookings" element={<BookingsPage />} />
           <Route path="/forum" element={<Forum />} />
           <Route path="/forum" element={<Forum />} />
-          <Route path="/forum/topic/:topicId" element={<TopicDetail />} />        </Routes>
+          <Route path="/forum/topic/:topicId" element={<TopicDetail />} />       
+          <Route path="/info" element={<InfoSection />} />
+        </Routes>
       </Router>
     </AuthProvider>
   );

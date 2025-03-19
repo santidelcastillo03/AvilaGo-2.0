@@ -77,7 +77,7 @@ function LandingPage() {
             <p>
               Abre discusiones y comparte ideas con otras personas de la comunidad!
             </p>
-            <a href="#" className="btn-link">
+            <a href="/forum" className="btn-link">
               Ir al foro <i className="fa fa-arrow-right"></i>
             </a>
           </div>
@@ -87,7 +87,7 @@ function LandingPage() {
             <p>
               Informacion y consejos sobre la naturaleza y el excursionismo
             </p>
-            <a href="#" className="btn-link">
+            <a href="/info" className="btn-link">
               Ver mas <i className="fa fa-arrow-right"></i>
             </a>
           </div>
