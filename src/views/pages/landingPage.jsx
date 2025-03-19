@@ -15,9 +15,9 @@ function LandingPage() {
       <Header />
 
       {/* SECCIÓN HERO / PRESENTACIÓN */}
-      <section className="hero-section">
-        <div className="hero-content">
-          <div className="hero-text">
+      <section className="hero-sectionlanding">
+        <div className="hero-contentlanding">
+          <div className="hero-textlanding">
             <p>
               En AvilaGo, conectamos a los estudiantes de la Universidad
               Metropolitana con la naturaleza a través de experiencias
@@ -31,7 +31,7 @@ function LandingPage() {
             <div><p>¡Comienza tu aventura hoy mismo!</p></div>
             
           </div>
-          <div className="hero-logo">
+          <div className="hero-logolanding">
             <img src={logo} alt="UNIMET AvilaGo Logo Grande" />
           </div>
         </div>

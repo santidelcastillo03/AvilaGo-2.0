@@ -11,12 +11,26 @@ import {
   faImages, 
   faComments 
 } from '@fortawesome/free-solid-svg-icons';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
 
   const handleNavigation = (path) => {
     navigate(path);
+  };
+
+  const showDevelopmentToast = () => {
+    toast.info("En desarrollo... Esta función estará disponible próximamente.", {
+      position: "top-center",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
   };
 
   return (
@@ -31,7 +45,7 @@ const AdminDashboard = () => {
             </div>
             <button 
               className="dashboard-button"
-              onClick={() => handleNavigation('/admin/reservations')}
+              onClick={showDevelopmentToast}
             >
               Gestionar Reservas
             </button>
@@ -79,7 +93,7 @@ const AdminDashboard = () => {
             </div>
             <button 
               className="dashboard-button"
-              onClick={() => handleNavigation('/admin/gallery')}
+              onClick={showDevelopmentToast}
             >
               Gestionar Galería
             </button>
@@ -91,12 +105,25 @@ const AdminDashboard = () => {
             </div>
             <button 
               className="dashboard-button"
-              onClick={() => handleNavigation('/admin/forum')}
+              onClick={showDevelopmentToast}
             >
               Gestionar Foro
             </button>
           </div>
         </div>
+        
+        {/* Toast Container */}
+        <ToastContainer
+          position="top-center"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
       </div>
     </div>
   );
