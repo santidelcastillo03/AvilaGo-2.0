@@ -363,17 +363,7 @@ const BookingsPage = () => {
                             <p><strong>Estado:</strong> <span className="payment-confirmed">Pago confirmado</span></p>
                           </div>
                           
-                          <div className="details-section guide-info">
-                            <h4>Información del Guía</h4>
-                            <div className="guide-profile">
-                              <img 
-                                src={booking.activity.guide.profilePic || '/default-profile.jpg'} 
-                                alt={booking.activity.guide.name}
-                                className="guide-pic"
-                              />
-                              <span className="guide-name">{booking.activity.guide.name}</span>
-                            </div>
-                          </div>
+                          
                         </div>
                       )}
                     </div>
@@ -445,17 +435,7 @@ const BookingsPage = () => {
                             <p><strong>Monto pagado:</strong> ${booking.paymentAmount.toFixed(2)} USD</p>
                           </div>
                           
-                          <div className="details-section guide-info">
-                            <h4>Información del Guía</h4>
-                            <div className="guide-profile">
-                              <img 
-                                src={booking.activity.guide.profilePic || '/default-profile.jpg'} 
-                                alt={booking.activity.guide.name}
-                                className="guide-pic"
-                              />
-                              <span className="guide-name">{booking.activity.guide.name}</span>
-                            </div>
-                          </div>
+                          
                         </div>
                       )}
                     </div>
