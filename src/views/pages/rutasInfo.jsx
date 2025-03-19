@@ -1,34 +1,143 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMapMarkerAlt, faRuler, faHiking } from '@fortawesome/free-solid-svg-icons';
+import { faMapMarkerAlt, faRuler, faHiking, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import '../../assets/styles/rutasInfo.css';
+import { getFirestore, doc, getDoc } from 'firebase/firestore';
 
 const TrailDetailComponent = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { routeId } = useParams(); // Get routeId from URL parameters
   const [mapLoaded, setMapLoaded] = useState(false);
   const [mapError, setMapError] = useState(null);
+  const [routeData, setRouteData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const mapRef = useRef(null);
   
   // Default coordinates for El Avila National Park
   const defaultCoordinates = { lat: 10.5347, lng: -66.8864 };
   
-  const routeData = location.state || {
-    // Default values if no state is received
-    id: 1,
-    title: "Ruta Desconocida",
-    about: "Información no disponible.",
-    difficulty: "N/A",
-    distance: "N/A",
-    coordinates: defaultCoordinates,
-    imageSrc: ""
+  // Function to get difficulty class for styling (missing from your code)
+  const getDifficultyColorClass = (difficulty) => {
+    if (!difficulty) return '';
+    
+    const lowerDifficulty = difficulty.toLowerCase();
+    if (lowerDifficulty.includes('fácil') || lowerDifficulty.includes('facil') || lowerDifficulty === 'easy' || lowerDifficulty === 'baja') {
+      return 'difficulty-easy';
+    } else if (lowerDifficulty.includes('moderada') || lowerDifficulty.includes('intermedia') || lowerDifficulty === 'medium' || lowerDifficulty === 'media') {
+      return 'difficulty-medium';
+    } else if (lowerDifficulty.includes('difícil') || lowerDifficulty.includes('dificil') || lowerDifficulty === 'hard' || lowerDifficulty === 'alta') {
+      return 'difficulty-hard';
+    } else {
+      return '';
+    }
   };
+  
+  // Fallback map function (missing from your code)
+  const tryFallbackMap = (lat, lng) => {
+    try {
+      // Create a link to Google Maps as fallback
+      const fallbackLink = document.createElement('a');
+      fallbackLink.href = `https://www.google.com/maps?q=${lat},${lng}`;
+      fallbackLink.target = '_blank';
+      fallbackLink.rel = 'noopener noreferrer';
+      fallbackLink.className = 'fallback-map-link';
+      fallbackLink.innerHTML = `
+        <div class="fallback-map-content">
+          <FontAwesomeIcon icon={faExclamationTriangle} />
+          <p>No se pudo cargar el mapa embebido.</p>
+          <span>Haz clic para ver en Google Maps</span>
+        </div>
+      `;
+      
+      // Clear existing content and append fallback link
+      while (mapRef.current.firstChild) {
+        mapRef.current.removeChild(mapRef.current.firstChild);
+      }
+      
+      mapRef.current.appendChild(fallbackLink);
+    } catch (fallbackError) {
+      console.error("Fallback map also failed:", fallbackError);
+    }
+  };
+  
+  // Fetch route data if needed
+  useEffect(() => {
+    const fetchRouteData = async () => {
+      try {
+        // If data is in location state, use it
+        if (location.state && typeof location.state === 'object') {
+          console.log("Using route data from location state:", location.state);
+          setRouteData(location.state);
+          setLoading(false);
+          return;
+        }
+        
+        // If no state data but we have an ID, fetch from Firestore
+        if (routeId) {
+          console.log("Fetching route data for ID:", routeId);
+          const db = getFirestore();
+          const routeRef = doc(db, "routes", routeId);
+          const routeSnapshot = await getDoc(routeRef);
+          
+          if (routeSnapshot.exists()) {
+            const data = {
+              id: routeId,
+              ...routeSnapshot.data()
+            };
+            console.log("Route data fetched successfully:", data);
+            setRouteData(data);
+          } else {
+            console.error("No route found with ID:", routeId);
+            setRouteData({
+              id: routeId || 1,
+              title: "Ruta Desconocida",
+              about: "Información no disponible.",
+              difficulty: "N/A",
+              distance: "N/A",
+              coordinates: defaultCoordinates,
+              imageSrc: ""
+            });
+          }
+        } else {
+          // No state and no ID
+          console.error("No route ID provided and no location state");
+          setRouteData({
+            id: 1,
+            title: "Ruta Desconocida",
+            about: "Información no disponible.",
+            difficulty: "N/A",
+            distance: "N/A",
+            coordinates: defaultCoordinates,
+            imageSrc: ""
+          });
+        }
+      } catch (error) {
+        console.error("Error in fetchRouteData:", error);
+        setRouteData({
+          id: routeId || 1,
+          title: "Ruta Desconocida",
+          about: "Error al cargar la información de la ruta.",
+          difficulty: "N/A",
+          distance: "N/A",
+          coordinates: defaultCoordinates,
+          imageSrc: ""
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchRouteData();
+  }, [location.state, routeId]);
   
   // Extract coordinates from routeData or use defaults
   const getCoordinates = () => {
+    if (!routeData) return defaultCoordinates;
+    
     // If routeData has proper coordinates object
     if (routeData.coordinates && 
         typeof routeData.coordinates === 'object' &&
@@ -68,7 +177,7 @@ const TrailDetailComponent = () => {
 
   // Initialize map using direct iframe embedding without API key
   useEffect(() => {
-    if (!mapRef.current) return;
+    if (!mapRef.current || !routeData) return;
     
     try {
       const coordinates = getCoordinates();
@@ -117,51 +226,39 @@ const TrailDetailComponent = () => {
       const coordinates = getCoordinates();
       tryFallbackMap(coordinates.lat, coordinates.lng);
     }
-  }, [routeData.title]);
+  }, [routeData]);
   
-  // Fallback approach if iframe loading fails
-  const tryFallbackMap = (lat, lng) => {
-    if (!mapRef.current) return;
-    
-    try {
-      // Create a link to Google Maps instead
-      const mapContainer = document.createElement('div');
-      mapContainer.className = 'fallback-map-container';
-      mapContainer.innerHTML = `
-        <p>El mapa interactivo no pudo cargarse.</p>
-        <a href="https://www.google.com/maps?q=${lat},${lng}" target="_blank" rel="noopener noreferrer" class="view-on-maps-button">
-          Ver ubicación en Google Maps
-        </a>
-        <div class="coordinates-display">
-          <p>Coordenadas: ${lat}, ${lng}</p>
+  // Show loading state while fetching data
+  if (loading) {
+    return (
+      <div className="trail-detail-page">
+        <Header />
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <p>Cargando información de la ruta...</p>
         </div>
-      `;
-      
-      // Clear existing content and append fallback
-      while (mapRef.current.firstChild) {
-        mapRef.current.removeChild(mapRef.current.firstChild);
-      }
-      
-      mapRef.current.appendChild(mapContainer);
-      setMapLoaded(true);
-      setMapError(null);
-      
-    } catch (error) {
-      console.error("Error setting up fallback map:", error);
-      setMapError("No se pudo mostrar la ubicación en el mapa.");
-    }
-  };
+        <Footer />
+      </div>
+    );
+  }
 
-  // Helper function for difficulty color class
-  const getDifficultyColorClass = (difficulty) => {
-    if (!difficulty) return "";
-    
-    const diff = difficulty.toLowerCase();
-    if (diff === "fácil" || diff === "facil" || diff === "easy") return "easy";
-    if (diff === "moderada" || diff === "medium" || diff === "media") return "moderate";
-    if (diff === "difícil" || diff === "dificil" || diff === "hard") return "difficult";
-    return "";
-  };
+  // Safety check to prevent rendering with null data
+  if (!routeData) {
+    return (
+      <div className="trail-detail-page">
+        <Header />
+        <div className="error-container">
+          <FontAwesomeIcon icon={faExclamationTriangle} className="error-icon" />
+          <h2>Error de carga</h2>
+          <p>No se pudo cargar la información de la ruta.</p>
+          <button onClick={() => navigate('/routes')} className="back-button">
+            Volver a Rutas
+          </button>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="trail-detail-page">

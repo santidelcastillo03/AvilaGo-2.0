@@ -15,6 +15,8 @@ import ActDash from './views/pages/actDash';
 import ManageUsers from './views/pages/manageUser';
 import ManageRutas from './views/pages/manageRuta';
 import BookingsPage from './views/pages/bookings';
+import Forum from './views/pages/forum';
+import TopicDetail from './views/pages/TopicDetail';
 
 function App() {
   return (
@@ -29,6 +31,7 @@ function App() {
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/rutasinfo" element={<RutaInfo />} /> 
+          <Route path="/route/:routeId" element={<RutaInfo />} />
           <Route path="/activities/:routeId" element={<Activities />} />
           <Route path="/activity/:activityId" element={<ActInfo />} />
           <Route path="/admin" element={<AdminDashboard />} />
@@ -36,7 +39,9 @@ function App() {
           <Route path="/admin/users" element={<ManageUsers />} />
           <Route path="/admin/routes" element={<ManageRutas />} />
           <Route path="/bookings" element={<BookingsPage />} />
-        </Routes>
+          <Route path="/forum" element={<Forum />} />
+          <Route path="/forum" element={<Forum />} />
+          <Route path="/forum/topic/:topicId" element={<TopicDetail />} />        </Routes>
       </Router>
     </AuthProvider>
   );
