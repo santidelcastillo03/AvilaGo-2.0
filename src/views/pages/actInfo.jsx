@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faClock, 
@@ -20,8 +20,10 @@ import '../../assets/styles/actInfo.css';
 const ActivityInfo = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { activityId } = useParams(); // Get activityId from URL parameters
   const [activityData, setActivityData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [userRole, setUserRole] = useState(null);
   
@@ -48,20 +50,78 @@ const ActivityInfo = () => {
     checkUserRole();
   }, []);
   
-  // Simulated loading for smoother transition
-  useEffect(() => {
-    if (location.state) {
-      // Short timeout to show smooth transition even if data is available immediately
-      const timer = setTimeout(() => {
+  // Load activity data from location state or fetch from Firestore
+  // Load activity data from location state or fetch from Firestore
+useEffect(() => {
+  const fetchActivityData = async () => {
+    setLoading(true);
+    
+    try {
+      // Check if data is available in location state
+      if (location.state && location.state.title) {
+        console.log("Using activity data from location state:", location.state);
         setActivityData(location.state);
+      } 
+      // Otherwise fetch from Firestore using ID from URL
+      else if (activityId) {
+        console.log("Fetching activity data for ID:", activityId);
+        const db = getFirestore();
+        const activityRef = doc(db, "activities", activityId);
+        const activitySnapshot = await getDoc(activityRef);
+        
+        if (activitySnapshot.exists()) {
+          const data = {
+            id: activitySnapshot.id,
+            ...activitySnapshot.data()
+          };
+          
+          console.log("Activity data loaded from Firestore:", data);
+          
+          // If guide information is missing, try to fetch it
+          // If guide information is missing, try to fetch it
+if (data.guideId && (!data.guideName || !data.guideImage)) {
+  try {
+    console.log("Fetching guide info for ID:", data.guideId);
+    const guideRef = doc(db, "users", data.guideId);
+    const guideSnapshot = await getDoc(guideRef);
+    
+    if (guideSnapshot.exists()) {
+      const guideData = guideSnapshot.data();
+      // Add guide information to activity data
+      data.guideName = guideData.name || guideData.displayName || "Guía";
+      data.guideImage = guideData.profilePic || "";
+      console.log("Added guide data:", { guideName: data.guideName });
+    } else {
+      console.log("Guide not found, using default values");
+      data.guideName = "Guía (no encontrado)";
+    }
+  } catch (guideErr) {
+    console.error("Error fetching guide data:", guideErr);
+    data.guideName = "Guía";  // Fallback name
+  }
+}
+          
+          setActivityData(data);
+        } else {
+          console.error("No activity found with ID:", activityId);
+          setError("No se encontró la actividad especificada");
+        }
+      } else {
+        setError("No se especificó una actividad");
+      }
+    } catch (err) {
+      console.error("Error fetching activity data:", err);
+      setError(`Error al cargar la información: ${err.message}`);
+    } finally {
+      // Short delay to ensure smooth transition
+      setTimeout(() => {
         setLoading(false);
       }, 300);
-      
-      return () => clearTimeout(timer);
-    } else {
-      setLoading(false);
     }
-  }, [location.state]);
+  };
+  
+  fetchActivityData();
+}, [location.state, activityId]);
   
   // Improved star rating display function
   const renderStars = (rating) => {
@@ -108,7 +168,7 @@ const ActivityInfo = () => {
   
   // Handle return to activities list
   const handleBack = () => {
-    navigate(-1); // Retrocede a la página anterior
+    navigate(-1); // Go back to previous page
   };
 
   // Get activity icon based on type
@@ -165,6 +225,18 @@ const ActivityInfo = () => {
             <div className="loading-spinner"></div>
             <p>Cargando información...</p>
           </div>
+        ) : error ? (
+          <div className="error-container">
+            <div className="error-icon">!</div>
+            <h2>Información no disponible</h2>
+            <p>{error}</p>
+            <button 
+              onClick={() => navigate('/routes')}
+              className="return-button"
+            >
+              Explorar rutas disponibles
+            </button>
+          </div>
         ) : !activityData ? (
           <div className="error-container">
             <div className="error-icon">!</div>
@@ -211,8 +283,8 @@ const ActivityInfo = () => {
                       <div className="rating-display">
                         <span className="meta-label">Calificación</span>
                         <div className="stars-container">
-                          {renderStars(activityData.rating)}
-                          <span className="rating-value">{activityData.rating.toFixed(1)}</span>
+                          {renderStars(activityData.rating || 0)}
+                          <span className="rating-value">{(activityData.rating || 0).toFixed(1)}</span>
                         </div>
                       </div>
                     </div>

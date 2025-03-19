@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../assets/images/logo.png';
 import defaultProfileImg from '../../assets/images/default-profile.jpg';
 import '../../assets/styles/header.css';
 import { useAuth } from '../../context/AuthContext';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, collection, getDocs, query, where } from 'firebase/firestore';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faCheckCircle, 
@@ -13,7 +13,11 @@ import {
   faTimes,
   faPhone,
   faEnvelope,
-  faMapMarkerAlt
+  faMapMarkerAlt,
+  faSearch,
+  faRoute,
+  faCalendar,
+  faUser
 } from '@fortawesome/free-solid-svg-icons';
 
 function Header() {
@@ -21,6 +25,14 @@ function Header() {
   const [userRole, setUserRole] = useState(null);
   const [profilePic, setProfilePic] = useState(defaultProfileImg);
   const [showContactModal, setShowContactModal] = useState(false);
+  const navigate = useNavigate();
+  
+  // Search functionality
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const searchRef = useRef(null);
   
   // Toast notification state
   const [showToast, setShowToast] = useState(false);
@@ -57,7 +69,142 @@ function Header() {
     };
     
     fetchUserData();
+    
+    // Close search results when clicking outside
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowSearchResults(false);
+      }
+    };
+    
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, [currentUser]);
+
+  // Handle search input changes with debounce
+  useEffect(() => {
+    const delaySearch = setTimeout(() => {
+      if (searchQuery.length >= 2) {
+        performSearch();
+      } else {
+        setSearchResults([]);
+        setShowSearchResults(false);
+      }
+    }, 300);
+    
+    return () => clearTimeout(delaySearch);
+  }, [searchQuery]);
+
+  const performSearch = async () => {
+    if (searchQuery.length < 2) return;
+    
+    setIsSearching(true);
+    
+    try {
+      const db = getFirestore();
+      // Convert search query to lowercase for case-insensitive comparison
+      const lowerCaseQuery = searchQuery.toLowerCase();
+      
+      // Get all routes and activities instead of using where clauses for case sensitivity
+      const routesSnapshot = await getDocs(collection(db, "routes"));
+      const activitiesSnapshot = await getDocs(collection(db, "activities"));
+      
+      // Filter routes that match the query case-insensitively
+      const routeResults = routesSnapshot.docs
+        .filter(doc => {
+          const title = doc.data().title?.toLowerCase() || '';
+          return title.includes(lowerCaseQuery);
+        })
+        .map(doc => ({
+          id: doc.id,
+          type: 'route',
+          title: doc.data().title,
+          data: doc.data()
+        }));
+      
+      // Filter activities that match the query case-insensitively
+      const activityResults = await Promise.all(activitiesSnapshot.docs
+        .filter(doc => {
+          const title = doc.data().title?.toLowerCase() || '';
+          return title.includes(lowerCaseQuery);
+        })
+        .map(async doc => {
+          const activityData = doc.data();
+          let updatedData = {
+            ...activityData,
+            // Ensure these crucial fields have default values
+            imageSrc: activityData.imageSrc || '',
+            guideName: activityData.guideName || '',
+            guideId: activityData.guideId || ''
+          };
+          
+          // If we have a guideId but no guideName, try to fetch guide info
+          if (activityData.guideId && !activityData.guideName) {
+            try {
+              console.log("Fetching guide data for activity:", activityData.title);
+              const guideDoc = await getDoc(doc(db, "users", activityData.guideId));
+              if (guideDoc.exists()) {
+                const guideData = guideDoc.data();
+                updatedData.guideName = guideData.name || guideData.displayName || "Guía";
+                updatedData.guideImage = guideData.profilePic || "";
+                console.log("Found guide data:", updatedData.guideName);
+              } else {
+                console.log("Guide not found for ID:", activityData.guideId);
+                updatedData.guideName = "Guía (no encontrado)";
+              }
+            } catch (guideError) {
+              console.error("Error fetching guide data:", guideError);
+              updatedData.guideName = "Guía";
+            }
+          }
+          
+          return {
+            id: doc.id,
+            type: 'activity',
+            title: activityData.title,
+            data: updatedData
+          };
+        }));
+      
+      // Combine and sort results
+      const combinedResults = [...routeResults, ...activityResults]
+        .sort((a, b) => a.title.localeCompare(b.title))
+        .slice(0, 5); // Limit to 5 results
+      
+      setSearchResults(combinedResults);
+      setShowSearchResults(combinedResults.length > 0);
+    } catch (error) {
+      console.error("Error performing search:", error);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleSearchSelection = (result) => {
+    setShowSearchResults(false);
+    setSearchQuery('');
+    
+    try {
+      console.log("Navigating to search result:", result);
+      
+      if (result.type === 'route') {
+        // For routes, use /route/:routeId pattern and pass data in state
+        navigate(`/route/${result.id}`, { 
+          state: result.data 
+        });
+      } else if (result.type === 'activity') {
+        // For activities, use /activity/:activityId pattern and pass data in state
+        navigate(`/activity/${result.id}`, { 
+          state: result.data 
+        });
+      }
+    } catch (error) {
+      console.error("Navigation error:", error);
+      showToastNotification('Error al navegar a la página de detalles', 'error');
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -113,6 +260,58 @@ function Header() {
           <img src={logo} alt="UNIMET AvilaGo Logo" />
         </Link>
       </div>
+      
+      {/* Search Box */}
+      <div className="header-search-container" ref={searchRef}>
+        <div className="search-input-wrapper">
+          <FontAwesomeIcon icon={faSearch} className="search-icon" />
+          <input
+            type="text"
+            placeholder="Buscar rutas y actividades..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onFocus={() => {
+              if (searchResults.length > 0) {
+                setShowSearchResults(true);
+              }
+            }}
+            className="header-search-input"
+          />
+          {isSearching && <div className="search-spinner"></div>}
+        </div>
+        
+        {showSearchResults && (
+          <div className="search-results-dropdown">
+            {searchResults.length === 0 ? (
+              <div className="no-results">No se encontraron resultados</div>
+            ) : (
+              <>
+                {searchResults.map((result) => (
+                  <div 
+                    key={`${result.type}-${result.id}`}
+                    className="search-result-item"
+                    onClick={() => handleSearchSelection(result)}
+                  >
+                    <div className="result-icon">
+                      <FontAwesomeIcon 
+                        icon={result.type === 'route' ? faRoute : faCalendar} 
+                      />
+                    </div>
+                    <div className="result-content">
+                      <div className="result-title">{result.title}</div>
+                      <div className="result-type">
+                        {result.type === 'route' ? 'Ruta' : 'Actividad'}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {/* Removed "Ver todos los resultados" link */}
+              </>
+            )}
+          </div>
+        )}
+      </div>
+      
       <nav className="landing-nav">
         <ul>
           <li><Link to="/routes">Rutas</Link></li>
