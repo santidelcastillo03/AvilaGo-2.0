@@ -18,18 +18,15 @@ const Payment = () => {
     const [error, setError] = useState(null);
     const [participants, setParticipants] = useState(1);
     const [user, setUser] = useState(null);
-    const [isLoading, setIsLoading] = useState(true); // Add overall loading state
+    const [isLoading, setIsLoading] = useState(true); 
 
-    // Check authentication and get user
     useEffect(() => {
-        let isMounted = true; // Use this to prevent setting state on unmounted component
+        let isMounted = true; 
         
         const checkAuth = async () => {
             try {
-                // Check if the user is logged in
                 const currentUser = auth.currentUser;
                 if (!currentUser) {
-                    // Redirect to login if not authenticated
                     navigate('/login', {
                         state: {
                             message: 'Por favor inicia sesión para realizar una reserva',
@@ -43,13 +40,11 @@ const Payment = () => {
                     setUser(currentUser);
                 }
                 
-                // Check if we have activity data from location state
                 if (location.state && location.state.id) {
                     if (isMounted) {
                         setActivityData(location.state);
                     }
                 } else {
-                    // If no data in state, try to get it from URL params or redirect
                     console.error('No activity data provided');
                     navigate('/routes');
                     return;
@@ -61,22 +56,20 @@ const Payment = () => {
                 }
             } finally {
                 if (isMounted) {
-                    setIsLoading(false); // Mark loading as done regardless of outcome
+                    setIsLoading(false); 
                 }
             }
         };
         
         checkAuth();
-        return () => { isMounted = false; }; // Cleanup function
+        return () => { isMounted = false; }; 
     }, [location, navigate]);
 
-    // Calculate total price based on number of participants
     const calculateTotalPrice = () => {
         if (!activityData || !activityData.price) return 10;
         return (activityData.price * participants);
     };
 
-    // Define the createOrder function 
     const createOrderHandler = (data, actions) => {
         const price = calculateTotalPrice();
         
@@ -98,13 +91,11 @@ const Payment = () => {
         }
     };
 
-    // Handle successful PayPal payment with delayed completion
-    // ...existing code...
+    
 const onApproveHandler = async (data, actions) => {
     setIsProcessing(true);
     
     try {
-        // Capture the PayPal order
         const details = await actions.order.capture();
         console.log("Payment captured:", details);
         
@@ -112,7 +103,6 @@ const onApproveHandler = async (data, actions) => {
             throw new Error("Usuario no autenticado");
         }
         
-        // Create a simplified booking document
         const bookingData = {
             userId: user.uid,
             activityId: activityData.id,
@@ -127,18 +117,14 @@ const onApproveHandler = async (data, actions) => {
             }
         };
         
-        // Add to bookings collection
         const bookingRef = await addDoc(collection(db, 'bookings'), bookingData);
         console.log("Booking created with ID:", bookingRef.id);
         
-        // Extend delay: wait 5 seconds before showing success state to keep PayPal window open longer
         await new Promise(resolve => setTimeout(resolve, 5000));
         
-        // Show success state
         setPaymentSuccess(true);
         setIsProcessing(false);
         
-        // Redirect to bookings page after a 10-second delay
         setTimeout(() => {
             navigate('/bookings', { 
                 state: { 
@@ -147,13 +133,13 @@ const onApproveHandler = async (data, actions) => {
             });
         }, 10000);
         
-        return true; // Return successful result to PayPal
+        return true; 
         
     } catch (err) {
         console.error("Error in payment process:", err);
         setError(err.message || "Error al procesar la reserva");
         setIsProcessing(false);
-        return false; // Return failure to PayPal
+        return false; 
     }
 };
 
@@ -161,7 +147,6 @@ const onApproveHandler = async (data, actions) => {
         navigate(-1);
     };
 
-    // Show loading state
     if (isLoading) {
         return (
             <div className="payment-page">
@@ -175,7 +160,6 @@ const onApproveHandler = async (data, actions) => {
         );
     }
 
-    // Show error page if no activity data is available
     if (!activityData && !isLoading) {
         return (
             <div className="payment-page">
@@ -275,14 +259,12 @@ const onApproveHandler = async (data, actions) => {
         try {
             setIsProcessing(true);
             
-            // Wait 2 seconds to simulate processing
             await new Promise(resolve => setTimeout(resolve, 2000));
             
             if (!user) {
                 throw new Error("Usuario no autenticado");
             }
             
-            // Create reservation document matching the structure expected by the bookings page
             const reservationData = {
                 userId: user.uid,
                 activityId: activityData.id,
@@ -293,14 +275,11 @@ const onApproveHandler = async (data, actions) => {
                 price: calculateTotalPrice()
             };
             
-            // Add to reservations collection (not bookings)
             const reservationRef = await addDoc(collection(db, 'reservations'), reservationData);
             console.log("Test reservation created with ID:", reservationRef.id);
             
-            // Show success state
             setPaymentSuccess(true);
             
-            // No redirect to stay on current page
             setTimeout(() => {
                 navigate('/bookings', { 
                     state: { paymentSuccess: true } 

@@ -1,17 +1,15 @@
-/* Make the gallery container fill the viewport height */
 .gallery-container {
     width: 100%;
-    min-height: 100vh; /* Use viewport height */
+    min-height: 100vh; 
     display: flex;
     flex-direction: column;
     background-color: #f4f4f4;
   }
   
-  /* Make the gallery content expand to fill available space */
   .gallery-content {
     padding: 20px 30px;
     position: relative;
-    flex: 1; /* This makes it expand to fill available space */
+    flex: 1; 
     background-color: #748e55;
     color: white;
     display: flex;
@@ -20,7 +18,7 @@
   
   .gallery-title {
     text-align: center;
-    color: white; /* Changed from #333 for better visibility on green background */
+    color: white;
     font-size: 32px;
     font-weight: normal;
     margin-bottom: 30px;
@@ -53,7 +51,7 @@
     position: relative;
     background-color: #748e55;
     padding: 20px;
-    flex: 1; /* Allow to expand */
+    flex: 1; 
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -75,7 +73,7 @@
     overflow: hidden;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    cursor: pointer; /* Add cursor pointer to indicate clickable */
+    cursor: pointer; 
     transition: all 0.3s ease;
   }
   
@@ -95,7 +93,6 @@
     transform: scale(1.05);
   }
   
-  /* Navigation arrows styling - improved for better visibility */
   .nav-arrow {
     position: absolute;
     top: 50%;
@@ -127,7 +124,6 @@
     right: 10px;
   }
   
-  /* Pagination dots */
   .carousel-dots {
     display: flex;
     justify-content: center;
@@ -148,7 +144,6 @@
     background-color: white;
   }
   
-  /* Modal for focused image */
   .image-modal-overlay {
     position: fixed;
     top: 0;
@@ -213,7 +208,6 @@
     text-align: center;
   }
   
-  /* Play button overlay for videos */
   .play-button-overlay {
     position: absolute;
     top: 50%;
@@ -235,16 +229,14 @@
     border-top: 10px solid transparent;
     border-bottom: 10px solid transparent;
     border-left: 15px solid white;
-    margin-left: 3px; /* Slight adjustment to center the triangle */
+    margin-left: 3px; 
   }
   
-  /* Green background for the entire gallery section */
   .gallery-content {
     background-color: #748e55;
     color: white;
   }
   
-  /* Animation for modal appearance */
   @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }

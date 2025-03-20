@@ -6,14 +6,12 @@ import Footer from '../components/Footer.jsx';
 import ActCard from '../components/ActCard.jsx';
 import '../../assets/styles/activities.css';
 
-// Import activity images
 import hikingImage from '../../assets/images/Hiking1.jpg';
 import campingImage from '../../assets/images/Camping1.jpg';
 import yogaImage from '../../assets/images/Yoga1.jpg';
 import birdwatchingImage from '../../assets/images/Birds1.jpeg';
 import photographyImage from '../../assets/images/Photo1.jpg';
 
-// Activity type to image mapping
 const activityImages = {
   'Senderismo': hikingImage,
   'Cámping': campingImage,
@@ -90,33 +88,27 @@ const Activities = () => {
               }
               console.log(`Activity ${docSnap.id} guideRealName:`, guideRealName);
               
-              // Fetch available dates for this activity
               let availableDates = [];
               let availableTimes = [];
               
               try {
-                // Get dates from the 'activity_dates' subcollection
                 const datesCollectionRef = collection(db, 'activities', docSnap.id, 'dates');
                 const datesSnapshot = await getDocs(datesCollectionRef);
                 
                 if (!datesSnapshot.empty) {
                   console.log(`Found ${datesSnapshot.size} dates for activity ${docSnap.id}`);
                   
-                  // Extract dates and times
-                  // Inside your datesSnapshot.forEach loop
+                  
 datesSnapshot.forEach(dateDoc => {
   const dateData = dateDoc.data();
   if (dateData.date) {
-    // Convert the date field
     if (dateData.date.toDate) {
       availableDates.push(dateData.date.toDate());
     } else if (typeof dateData.date === 'string') {
       availableDates.push(new Date(dateData.date));
     }
     
-    // Convert the time field if available
     if (dateData.time) {
-      // If time is a Firestore timestamp, convert it
       if (dateData.time.toDate) {
         availableTimes.push(
           dateData.time.toDate().toLocaleTimeString('es-ES', {
@@ -131,7 +123,6 @@ datesSnapshot.forEach(dateDoc => {
   }
 });
                   
-                  // Sort dates chronologically
                   availableDates.sort((a, b) => a - b);
                   
                 } else {
@@ -141,7 +132,6 @@ datesSnapshot.forEach(dateDoc => {
                 console.error(`Error fetching dates for activity ${docSnap.id}:`, error);
               }
               
-              // If no dates in subcollection, check if there's a single date field on the activity
               if (availableDates.length === 0 && data.date) {
                 if (data.date.toDate) {
                   availableDates.push(data.date.toDate());
@@ -149,7 +139,6 @@ datesSnapshot.forEach(dateDoc => {
                   availableDates.push(new Date(data.date));
                 }
                 
-                // Check for a time field too
                 if (data.time) {
                   availableTimes.push(data.time);
                 }
@@ -187,10 +176,8 @@ datesSnapshot.forEach(dateDoc => {
     fetchActivities();
   }, [routeId]);
 
-  // Check if we should show the placeholder
   const shouldShowPlaceholder = !loading && !error && activities.length === 0;
   
-  // Format date for display
   const formatDate = (date, time = null) => {
     if (!date) return 'Fechas flexibles';
     
@@ -254,16 +241,13 @@ datesSnapshot.forEach(dateDoc => {
     }));
 
     const now = new Date();
-    // Filter for future schedules
     const futureSchedule = schedule.filter(s => s.date > now);
 
     if (futureSchedule.length > 0) {
-      // Sort by date and pick the nearest one
       futureSchedule.sort((a, b) => a.date - b.date);
       const nearest = futureSchedule[0];
       dateDisplay = formatDate(nearest.date, nearest.time);
     } else {
-      // If no future dates, sort by descending order and use the most recent past date
       schedule.sort((a, b) => b.date - a.date);
       const recent = schedule[0];
       dateDisplay = `Finalizado: ${formatDate(recent.date, recent.time)}`;

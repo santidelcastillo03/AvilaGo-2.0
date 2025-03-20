@@ -50,7 +50,6 @@ const ProfilePage = () => {
     role: 'user'
   });
 
-  // Settings state
   const [settings, setSettings] = useState({
     notifications: true,
     newsletterSubscription: true,
@@ -58,7 +57,6 @@ const ProfilePage = () => {
     language: "Spanish"
   });
 
-  // Fetch user data on component mount
   useEffect(() => {
     const fetchUserData = async () => {
       if (!currentUser) {
@@ -133,7 +131,6 @@ const ProfilePage = () => {
     }));
   };
 
-  // Handle toggle settings
   const handleSettingToggle = (setting) => {
     setSettings(prev => ({
       ...prev,
@@ -141,7 +138,6 @@ const ProfilePage = () => {
     }));
   };
 
-  // Handle language change
   const handleLanguageChange = (e) => {
     setSettings(prev => ({
       ...prev,
@@ -149,7 +145,6 @@ const ProfilePage = () => {
     }));
   };
 
-  // Save profile changes
   const saveChanges = async () => {
     if (!currentUser) return;
 
@@ -174,25 +169,21 @@ const ProfilePage = () => {
     }
   };
 
-  // Trigger file input click
   const handleChangePhotoClick = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
   };
 
-  // Handle file selection for Supabase Storage (sin requerir autenticación)
   const handleFileChange = async (e) => {
     const selectedFile = e.target.files[0];
     if (!selectedFile) return;
   
-    // Validar tipo de archivo
     if (!selectedFile.type.startsWith('image/')) {
       alert('Por favor selecciona una imagen.');
       return;
     }
   
-    // Validar tamaño del archivo (máx 2MB)
     if (selectedFile.size > 2 * 1024 * 1024) {
       alert('La imagen es demasiado grande. El tamaño máximo es 2MB.');
       return;
@@ -202,12 +193,10 @@ const ProfilePage = () => {
       setUploadingImage(true);
       console.log("Iniciando subida de imagen a Supabase...");
   
-      // Construir nombre y ruta para el archivo en Supabase
       const fileExt = selectedFile.name.split('.').pop();
       const fileName = `${currentUser.uid}_${Date.now()}.${fileExt}`;
       const filePath = `profile-images/${fileName}`;
   
-      // Subir archivo al bucket "user-photos"
       const { data, error } = await supabase
         .storage
         .from('user-photos')
@@ -218,7 +207,6 @@ const ProfilePage = () => {
       }
       console.log("Archivo subido. Obteniendo URL pública...");
   
-      // Obtener la URL pública
       const { data: publicUrlData, error: publicUrlError } = supabase
         .storage
         .from('user-photos')
@@ -229,12 +217,10 @@ const ProfilePage = () => {
       const imageUrl = publicUrlData.publicUrl;
       console.log("URL de la imagen:", imageUrl);
   
-      // Actualizar Firestore con la URL de la imagen
       const db = getFirestore();
       const userRef = doc(db, "users", currentUser.uid);
       await updateDoc(userRef, { profilePic: imageUrl });
   
-      // Actualizar el estado local
       setEditedData(prev => ({ ...prev, profileImage: imageUrl }));
       setUserData(prev => ({ ...prev, profileImage: imageUrl }));
   

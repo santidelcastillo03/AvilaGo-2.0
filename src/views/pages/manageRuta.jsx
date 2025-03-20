@@ -57,7 +57,6 @@ const ManageRutas = () => {
     fetchRutas();
   }, []);
   
-  // Fetch routes from Firestore
   const fetchRutas = async () => {
     setLoading(true);
     try {
@@ -131,12 +130,10 @@ const ManageRutas = () => {
     }
   };
   
-  // Handle search input change
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
   
-  // Handle sorting
   const handleSort = (field) => {
     setSortOption(prevSort => ({
       field,
@@ -223,7 +220,6 @@ const ManageRutas = () => {
     }
   };
   
-  // Filter and sort routes
   const filteredRutas = rutas
     .filter(ruta => {
       if (!searchTerm) return true;

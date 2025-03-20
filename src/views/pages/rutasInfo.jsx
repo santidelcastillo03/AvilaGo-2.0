@@ -17,10 +17,8 @@ const TrailDetailComponent = () => {
   const [loading, setLoading] = useState(true);
   const mapRef = useRef(null);
   
-  // Default coordinates for El Avila National Park
   const defaultCoordinates = { lat: 10.5347, lng: -66.8864 };
   
-  // Function to get difficulty class for styling (missing from your code)
   const getDifficultyColorClass = (difficulty) => {
     if (!difficulty) return '';
     
@@ -36,10 +34,8 @@ const TrailDetailComponent = () => {
     }
   };
   
-  // Fallback map function (missing from your code)
   const tryFallbackMap = (lat, lng) => {
     try {
-      // Create a link to Google Maps as fallback
       const fallbackLink = document.createElement('a');
       fallbackLink.href = `https://www.google.com/maps?q=${lat},${lng}`;
       fallbackLink.target = '_blank';
@@ -53,7 +49,6 @@ const TrailDetailComponent = () => {
         </div>
       `;
       
-      // Clear existing content and append fallback link
       while (mapRef.current.firstChild) {
         mapRef.current.removeChild(mapRef.current.firstChild);
       }
@@ -64,11 +59,9 @@ const TrailDetailComponent = () => {
     }
   };
   
-  // Fetch route data if needed
   useEffect(() => {
     const fetchRouteData = async () => {
       try {
-        // If data is in location state, use it
         if (location.state && typeof location.state === 'object') {
           console.log("Using route data from location state:", location.state);
           setRouteData(location.state);
@@ -76,7 +69,6 @@ const TrailDetailComponent = () => {
           return;
         }
         
-        // If no state data but we have an ID, fetch from Firestore
         if (routeId) {
           console.log("Fetching route data for ID:", routeId);
           const db = getFirestore();
@@ -103,7 +95,6 @@ const TrailDetailComponent = () => {
             });
           }
         } else {
-          // No state and no ID
           console.error("No route ID provided and no location state");
           setRouteData({
             id: 1,
@@ -134,11 +125,9 @@ const TrailDetailComponent = () => {
     fetchRouteData();
   }, [location.state, routeId]);
   
-  // Extract coordinates from routeData or use defaults
   const getCoordinates = () => {
     if (!routeData) return defaultCoordinates;
     
-    // If routeData has proper coordinates object
     if (routeData.coordinates && 
         typeof routeData.coordinates === 'object' &&
         'lat' in routeData.coordinates && 
@@ -146,7 +135,6 @@ const TrailDetailComponent = () => {
       return routeData.coordinates;
     }
     
-    // If coordinates are stored as a string like "10.5347,-66.8864"
     if (typeof routeData.coordinates === 'string') {
       const parts = routeData.coordinates.split(',');
       if (parts.length === 2) {
@@ -158,9 +146,7 @@ const TrailDetailComponent = () => {
       }
     }
     
-    // If there's a map URL with coordinates in it, try to extract them
     if (routeData.map && typeof routeData.map === 'string') {
-      // Look for patterns like @10.5347,-66.8864 in Google Maps URLs
       const match = routeData.map.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
       if (match && match.length === 3) {
         const lat = parseFloat(match[1]);
@@ -171,11 +157,9 @@ const TrailDetailComponent = () => {
       }
     }
     
-    // Fall back to default coordinates
     return defaultCoordinates;
   };
 
-  // Initialize map using direct iframe embedding without API key
   useEffect(() => {
     if (!mapRef.current || !routeData) return;
     
@@ -183,21 +167,17 @@ const TrailDetailComponent = () => {
       const coordinates = getCoordinates();
       console.log("Using coordinates for map:", coordinates);
       
-      // Create an iframe with Google Maps embed URL
       const iframe = document.createElement('iframe');
       iframe.style.width = '100%';
       iframe.style.height = '100%';
       iframe.style.border = 'none';
       iframe.title = `Mapa de ${routeData.title}`;
       
-      // Create Google Maps embed URL without API key
       const lat = coordinates.lat;
       const lng = coordinates.lng;
       
-      // Use standard Google Maps URL that doesn't require API key
       iframe.src = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3923!2d${lng}!3d${lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zM!5e0!3m2!1sen!2sus!4v1!5m2!1sen!2sus`;
       
-      // Add event listeners
       iframe.onload = () => {
         console.log("Map iframe loaded successfully");
         setMapLoaded(true);
@@ -207,11 +187,9 @@ const TrailDetailComponent = () => {
         console.error("Error loading map iframe:", error);
         setMapError("Error al cargar el mapa. Por favor, inténtalo de nuevo.");
         
-        // Try fallback approach with standard Google Maps URL
         tryFallbackMap(lat, lng);
       };
       
-      // Clear existing content and append iframe
       while (mapRef.current.firstChild) {
         mapRef.current.removeChild(mapRef.current.firstChild);
       }
@@ -222,13 +200,11 @@ const TrailDetailComponent = () => {
       console.error("Error setting up map:", error);
       setMapError("Error al configurar el mapa: " + error.message);
       
-      // Try fallback to direct Google Maps link
       const coordinates = getCoordinates();
       tryFallbackMap(coordinates.lat, coordinates.lng);
     }
   }, [routeData]);
   
-  // Show loading state while fetching data
   if (loading) {
     return (
       <div className="trail-detail-page">
@@ -242,7 +218,6 @@ const TrailDetailComponent = () => {
     );
   }
 
-  // Safety check to prevent rendering with null data
   if (!routeData) {
     return (
       <div className="trail-detail-page">

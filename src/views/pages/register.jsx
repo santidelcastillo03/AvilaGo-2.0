@@ -41,11 +41,9 @@ function Register() {
     }
 
     try {
-      // Registrar usuario y obtener userCredential
       const userCredential = await register(formData.email, formData.password);
       console.log('Usuario registrado exitosamente:', { role, ...formData });
       
-      // Guardar datos en Firestore en la colección "users", usando el uid del usuario
       await setDoc(doc(db, "users", userCredential.user.uid), {
         name: formData.name,
         email: formData.email,

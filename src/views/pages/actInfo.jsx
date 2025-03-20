@@ -20,21 +20,19 @@ import '../../assets/styles/actInfo.css';
 const ActivityInfo = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { activityId } = useParams(); // Get activityId from URL parameters
+  const { activityId } = useParams(); 
   const [activityData, setActivityData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [userRole, setUserRole] = useState(null);
   
-  // Check user authentication and role
   useEffect(() => {
     const auth = getAuth();
     const checkUserRole = async () => {
       if (auth.currentUser) {
         setCurrentUser(auth.currentUser);
         
-        // Get user role from Firestore
         try {
           const db = getFirestore();
           const userDoc = await getDoc(doc(db, 'users', auth.currentUser.uid));
@@ -50,19 +48,16 @@ const ActivityInfo = () => {
     checkUserRole();
   }, []);
   
-  // Load activity data from location state or fetch from Firestore
-  // Load activity data from location state or fetch from Firestore
+ 
 useEffect(() => {
   const fetchActivityData = async () => {
     setLoading(true);
     
     try {
-      // Check if data is available in location state
       if (location.state && location.state.title) {
         console.log("Using activity data from location state:", location.state);
         setActivityData(location.state);
       } 
-      // Otherwise fetch from Firestore using ID from URL
       else if (activityId) {
         console.log("Fetching activity data for ID:", activityId);
         const db = getFirestore();
@@ -77,8 +72,7 @@ useEffect(() => {
           
           console.log("Activity data loaded from Firestore:", data);
           
-          // If guide information is missing, try to fetch it
-          // If guide information is missing, try to fetch it
+          
 if (data.guideId && (!data.guideName || !data.guideImage)) {
   try {
     console.log("Fetching guide info for ID:", data.guideId);
@@ -87,7 +81,6 @@ if (data.guideId && (!data.guideName || !data.guideImage)) {
     
     if (guideSnapshot.exists()) {
       const guideData = guideSnapshot.data();
-      // Add guide information to activity data
       data.guideName = guideData.name || guideData.displayName || "Guía";
       data.guideImage = guideData.profilePic || "";
       console.log("Added guide data:", { guideName: data.guideName });
@@ -97,7 +90,7 @@ if (data.guideId && (!data.guideName || !data.guideImage)) {
     }
   } catch (guideErr) {
     console.error("Error fetching guide data:", guideErr);
-    data.guideName = "Guía";  // Fallback name
+    data.guideName = "Guía";  
   }
 }
           
@@ -123,14 +116,12 @@ if (data.guideId && (!data.guideName || !data.guideImage)) {
   fetchActivityData();
 }, [location.state, activityId]);
   
-  // Improved star rating display function
   const renderStars = (rating) => {
     const stars = [];
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
     const totalStars = 5;
     
-    // Add full stars
     for (let i = 0; i < fullStars; i++) {
       stars.push(
         <FontAwesomeIcon 
@@ -141,7 +132,6 @@ if (data.guideId && (!data.guideName || !data.guideImage)) {
       );
     }
     
-    // Add half star if needed - fixed implementation
     if (hasHalfStar) {
       stars.push(
         <span key="half-star" className="star-half-container">
@@ -151,7 +141,6 @@ if (data.guideId && (!data.guideName || !data.guideImage)) {
       );
     }
     
-    // Add empty stars to make 5 total
     const emptyStarsCount = totalStars - fullStars - (hasHalfStar ? 1 : 0);
     for (let i = 0; i < emptyStarsCount; i++) {
       stars.push(
@@ -166,21 +155,16 @@ if (data.guideId && (!data.guideName || !data.guideImage)) {
     return stars;
   };
   
-  // Handle return to activities list
   const handleBack = () => {
-    navigate(-1); // Go back to previous page
+    navigate(-1); 
   };
 
-  // Get activity icon based on type
   const getActivityTypeIcon = (type) => {
-    // You can expand this with more icons for different activity types
     return faHiking; // Default icon
   };
   
-  // Handle reservation button click
   const handleReservation = () => {
     if (!currentUser) {
-      // Redirect to login if not logged in
       navigate('/login', { 
         state: { 
           from: location.pathname,
@@ -191,12 +175,10 @@ if (data.guideId && (!data.guideName || !data.guideImage)) {
     }
     
     if (userRole !== 'estudiante') {
-      // If user is not a student, show an alert
       alert('Solo los estudiantes pueden reservar actividades');
       return;
     }
     
-    // Navigate to payment page with activity data
     navigate('/payment', { state: activityData });
   };
 

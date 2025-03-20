@@ -16,7 +16,6 @@ import {
 import '../../assets/styles/forum.css';
 
 const Forum = () => {
-  // Rest of your code remains unchanged
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   const [topics, setTopics] = useState([]);
@@ -30,7 +29,6 @@ const Forum = () => {
   });
   const [userProfiles, setUserProfiles] = useState({});
 
-  // Fetch topics from Firestore
   useEffect(() => {
     const fetchTopics = async () => {
       setLoading(true);
@@ -44,7 +42,6 @@ const Forum = () => {
         for (const topicDoc of topicsSnapshot.docs) {
           const data = topicDoc.data();
           
-          // Get user profile for the topic creator
           if (data.userId && !userProfiles[data.userId]) {
             try {
               const userDoc = await getDoc(doc(db, 'users', data.userId));
@@ -78,7 +75,6 @@ const Forum = () => {
     fetchTopics();
   }, []);
   
-  // Handle creating a new topic
   const handleCreateTopic = async () => {
     if (!currentUser) {
       navigate('/login', { 
@@ -109,7 +105,6 @@ const Forum = () => {
       
       const docRef = await addDoc(collection(db, 'forumTopics'), newTopic);
       
-      // Add the new topic to state
       setTopics(prevTopics => [
         {
           id: docRef.id,
@@ -119,7 +114,6 @@ const Forum = () => {
         ...prevTopics
       ]);
       
-      // Reset form and close modal
       setNewTopicData({ title: '', description: '' });
       setShowNewTopicModal(false);
     } catch (error) {
@@ -128,7 +122,6 @@ const Forum = () => {
     }
   };
   
-  // Filter topics based on search term
   const filteredTopics = topics.filter(topic => 
     topic.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     topic.description.toLowerCase().includes(searchTerm.toLowerCase())

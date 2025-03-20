@@ -31,10 +31,8 @@ const BookingsPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   
   useEffect(() => {
-    // Check if user is logged in
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (!user) {
-        // Redirect to login if not logged in
         navigate('/login', { 
           state: { 
             message: 'Por favor inicia sesión para ver tus reservas.',
@@ -48,7 +46,6 @@ const BookingsPage = () => {
         setLoading(true);
         setError(null);
         
-        // Query reservations for the current user where payment is confirmed
         const reservationsQuery = query(
           collection(db, 'reservations'),
           where('userId', '==', user.uid),
@@ -58,7 +55,6 @@ const BookingsPage = () => {
         const reservationsSnapshot = await getDocs(reservationsQuery);
         
         if (reservationsSnapshot.empty) {
-          // No reservations found
           setActiveBookings([]);
           setPastBookings([]);
           setLoading(false);
@@ -68,15 +64,12 @@ const BookingsPage = () => {
         const bookingsData = [];
         const currentDate = new Date();
         
-        // Process each reservation
         for (const reservationDoc of reservationsSnapshot.docs) {
           const reservationData = reservationDoc.data();
           
           try {
-            // Skip if missing required data
             if (!reservationData.activityId) continue;
             
-            // Fetch activity details
             const activityRef = doc(db, 'activities', reservationData.activityId);
             const activityDoc = await getDoc(activityRef);
             
@@ -84,10 +77,8 @@ const BookingsPage = () => {
             
             const activityData = activityDoc.data();
             
-            // Convert timestamp to Date
             const activityDate = activityData.date?.toDate() || new Date();
             
-            // Get route data
             let routeData = { title: 'Ruta no disponible' };
             if (activityData.routeId) {
               const routeDoc = await getDoc(doc(db, 'routes', activityData.routeId));
@@ -96,7 +87,6 @@ const BookingsPage = () => {
               }
             }
             
-            // Get guide data
             let guideData = { name: 'Guía no disponible', profilePic: null };
             if (activityData.guideId) {
               const guideDoc = await getDoc(doc(db, 'users', activityData.guideId));
@@ -105,13 +95,12 @@ const BookingsPage = () => {
               }
             }
             
-            // Add to bookings array
             bookingsData.push({
               id: reservationDoc.id,
               bookingDate: reservationData.createdAt?.toDate() || new Date(),
               paymentAmount: reservationData.price || 0,
               paymentMethod: 'PayPal',
-              participants: 1, // Default to 1 if not specified
+              participants: 1, 
               activity: {
                 id: activityData.id || reservationData.activityId,
                 title: activityData.title || reservationData.activityName || 'Actividad sin nombre',
@@ -131,24 +120,19 @@ const BookingsPage = () => {
                   profilePic: guideData.profilePic || '/default-profile.jpg'
                 }
               },
-              // Activity is active if date is in the future
               isActive: activityDate > currentDate
             });
           } catch (err) {
             console.error('Error processing reservation:', reservationDoc.id, err);
-            // Continue to next reservation
             continue;
           }
         }
         
-        // Sort and separate bookings
         const active = bookingsData.filter(booking => booking.isActive);
         const past = bookingsData.filter(booking => !booking.isActive);
         
-        // Sort active bookings by closest date first
         active.sort((a, b) => a.activity.date - b.activity.date);
         
-        // Sort past bookings by most recent first
         past.sort((a, b) => b.activity.date - a.activity.date);
         
         setActiveBookings(active);
@@ -187,14 +171,11 @@ const BookingsPage = () => {
     return time || 'Hora no especificada';
   };
   
-  // Filter active bookings based on search and filter criteria
   const filteredActiveBookings = activeBookings.filter(booking => {
-    // Apply search filter
     if (searchTerm && !booking.activity.title.toLowerCase().includes(searchTerm.toLowerCase())) {
       return false;
     }
     
-    // Apply time filter
     if (filter === 'this-week') {
       const now = new Date();
       const endOfWeek = new Date();
@@ -207,16 +188,13 @@ const BookingsPage = () => {
       return booking.activity.date <= endOfMonth;
     }
     
-    // Show all if no filter applies
     return true;
   });
   
-  // Filter past bookings based on search
   const filteredPastBookings = pastBookings.filter(booking => {
     return searchTerm ? booking.activity.title.toLowerCase().includes(searchTerm.toLowerCase()) : true;
   });
   
-  // Calculate days remaining until activity
   const getDaysRemaining = (activityDate) => {
     if (!activityDate || !(activityDate instanceof Date) || isNaN(activityDate)) {
       return 0;

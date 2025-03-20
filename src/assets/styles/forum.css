@@ -1,4 +1,3 @@
-/* Forum Styles */
 .forum-page {
     min-height: 100vh;
     background-color: #f7f7f7;
@@ -15,7 +14,6 @@
     flex: 1;
   }
   
-  /* Forum Header */
   .forum-header {
     text-align: center;
     margin-bottom: 2.5rem;
@@ -33,7 +31,6 @@
     font-size: 1.1rem;
   }
   
-  /* Forum Controls */
   .forum-controls {
     display: flex;
     justify-content: space-between;
@@ -95,7 +92,6 @@
     box-shadow: 0 6px 12px rgba(59, 87, 49, 0.2);
   }
   
-  /* Loading and Error States */
   .loading-container, .error-container {
     display: flex;
     flex-direction: column;
@@ -142,8 +138,7 @@
     border: 1px dashed #ddd;
   }
   
-  /* Topics List */
-  /* Topics list styles */
+  
 .topics-list {
     background-color: white;
     border-radius: 10px;
@@ -251,7 +246,6 @@
     }
   }
   
- /* Modal styles */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -384,7 +378,6 @@
     background-color: #2d4425;
   }
   
-  /* Topic Detail Page */
   .topic-detail-page {
     min-height: 100vh;
     background-color: #f7f7f7;
@@ -504,7 +497,6 @@
     margin-right: 0.4rem;
   }
   
-  /* Comments Section */
   .comments-section {
     background-color: white;
     border-radius: 12px;
@@ -555,7 +547,6 @@
     font-size: 1rem;
   }
   
-  /* Reply Section */
   .reply-section {
     border-top: 1px solid #eee;
     padding-top: 2rem;
@@ -638,7 +629,6 @@
     background-color: #2d4425;
   }
   
-  /* Responsive Styles */
   @media (max-width: 768px) {
     .forum-title {
       font-size: 2rem;

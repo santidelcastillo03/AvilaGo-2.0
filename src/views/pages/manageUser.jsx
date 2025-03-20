@@ -54,7 +54,6 @@ const ManageUsers = () => {
   const [sortOption, setSortOption] = useState({ field: 'name', direction: 'asc' }); // Changed default sort
   const [showPassword, setShowPassword] = useState(false);
   
-  // Form data for new/edit user
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -63,11 +62,9 @@ const ManageUsers = () => {
     role: 'estudiante'
   });
   
-  // Form validation
   const [formErrors, setFormErrors] = useState({});
   
   useEffect(() => {
-    // Check if user is admin before loading content
     const checkAdmin = async () => {
       const auth = getAuth();
       if (auth.currentUser) {
@@ -128,17 +125,13 @@ const ManageUsers = () => {
     try {
       const db = getFirestore();
       
-      // Delete from Firestore
       await deleteDoc(doc(db, 'users', userToDelete.id));
       
-      // Update local state
       setUsers(users.filter(user => user.id !== userToDelete.id));
       
-      // Close confirmation modal
       setShowDeleteConfirmation(false);
       setUserToDelete(null);
       
-      // Show success message
       alert("Usuario eliminado con éxito");
     } catch (err) {
       console.error("Error deleting user:", err);
@@ -152,7 +145,6 @@ const ManageUsers = () => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
     
-    // Clear validation errors when user types
     if (formErrors[name]) {
       setFormErrors({ ...formErrors, [name]: null });
     }
@@ -183,7 +175,6 @@ const ManageUsers = () => {
   const handleAddUser = async (e) => {
     e.preventDefault();
     
-    // Validate form
     const errors = validateForm();
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
@@ -195,14 +186,12 @@ const ManageUsers = () => {
       const auth = getAuth();
       const db = getFirestore();
       
-      // Create user in Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         formData.email,
         formData.password
       );
       
-      // Create user document in Firestore
       await setDoc(doc(db, 'users', userCredential.user.uid), {
         name: formData.name,
         email: formData.email,
@@ -210,7 +199,6 @@ const ManageUsers = () => {
         createdAt: serverTimestamp()
       });
       
-      // Add new user to state
       const newUser = {
         id: userCredential.user.uid,
         name: formData.name,
@@ -220,7 +208,6 @@ const ManageUsers = () => {
       
       setUsers([...users, newUser]);
       
-      // Reset form and close modal
       setFormData({
         email: '',
         password: '',
@@ -230,7 +217,6 @@ const ManageUsers = () => {
       });
       setShowAddModal(false);
       
-      // Show success message
       alert("Usuario creado con éxito");
       
     } catch (err) {
@@ -260,7 +246,6 @@ const ManageUsers = () => {
   const handleUpdateUser = async (e) => {
     e.preventDefault();
     
-    // Validate form (except password for existing users)
     const errors = validateForm();
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
@@ -271,14 +256,12 @@ const ManageUsers = () => {
     try {
       const db = getFirestore();
       
-      // Update user document in Firestore
       await updateDoc(doc(db, 'users', currentUser.id), {
         name: formData.name,
         role: formData.role,
         updatedAt: serverTimestamp()
       });
       
-      // Update local state
       setUsers(users.map(user => 
         user.id === currentUser.id 
           ? {
@@ -289,11 +272,9 @@ const ManageUsers = () => {
           : user
       ));
       
-      // Reset and close modal
       setShowEditModal(false);
       setCurrentUser(null);
       
-      // Show success message
       alert("Usuario actualizado con éxito");
       
     } catch (err) {
@@ -316,7 +297,6 @@ const ManageUsers = () => {
     }));
   };
 
-  // Filter and sort users based on search term, role filter, and sort option
   const filteredUsers = users
     .filter(user => {
       const matchesSearch = 
@@ -330,11 +310,9 @@ const ManageUsers = () => {
     .sort((a, b) => {
       const field = sortOption.field;
       
-      // Handle undefined values
       const valueA = a[field] !== undefined ? a[field] : '';
       const valueB = b[field] !== undefined ? b[field] : '';
       
-      // Regular string comparison
       if (valueA < valueB) return sortOption.direction === 'asc' ? -1 : 1;
       if (valueA > valueB) return sortOption.direction === 'asc' ? 1 : -1;
       return 0;

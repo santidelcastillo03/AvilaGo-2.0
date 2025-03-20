@@ -25,14 +25,12 @@ const TopicDetail = () => {
   const [error, setError] = useState(null);
   const [userProfiles, setUserProfiles] = useState({});
   
-  // Fetch topic and comments
   useEffect(() => {
     const fetchTopicAndComments = async () => {
       setLoading(true);
       try {
         const db = getFirestore();
         
-        // Get topic data
         const topicRef = doc(db, 'forumTopics', topicId);
         const topicSnap = await getDoc(topicRef);
         
@@ -51,12 +49,10 @@ const TopicDetail = () => {
         
         setTopic(topicData);
         
-        // Update view count
         await updateDoc(topicRef, {
           viewCount: increment(1)
         });
         
-        // Get user profile for topic creator
         if (topicData.userId) {
           try {
             const userDoc = await getDoc(doc(db, 'users', topicData.userId));
@@ -71,7 +67,6 @@ const TopicDetail = () => {
           }
         }
         
-        // Get comments
         const commentsQuery = query(
           collection(db, 'forumTopics', topicId, 'comments'),
           orderBy('createdAt', 'asc')
@@ -83,7 +78,6 @@ const TopicDetail = () => {
         for (const commentDoc of commentsSnapshot.docs) {
           const data = commentDoc.data();
           
-          // Get user profile for comment author
           if (data.userId && !userProfiles[data.userId]) {
             try {
               const userDoc = await getDoc(doc(db, 'users', data.userId));
@@ -119,7 +113,6 @@ const TopicDetail = () => {
     }
   }, [topicId]);
   
-  // Handle posting a new comment
   const handlePostComment = async () => {
     if (!currentUser) {
       navigate('/login', { 
@@ -145,19 +138,16 @@ const TopicDetail = () => {
         createdAt: serverTimestamp()
       };
       
-      // Add comment to Firestore
       const docRef = await addDoc(
         collection(db, 'forumTopics', topicId, 'comments'), 
         commentData
       );
       
-      // Update topic last activity and comment count
       await updateDoc(doc(db, 'forumTopics', topicId), {
         lastActivity: serverTimestamp(),
         commentCount: increment(1)
       });
       
-      // Update local state
       setComments([
         ...comments, 
         {
@@ -167,14 +157,12 @@ const TopicDetail = () => {
         }
       ]);
       
-      // Update topic in local state
       setTopic(prev => ({
         ...prev,
         lastActivity: new Date(),
         commentCount: (prev.commentCount || 0) + 1
       }));
       
-      // Clear comment input
       setNewComment('');
     } catch (error) {
       console.error('Error posting comment:', error);
@@ -182,7 +170,6 @@ const TopicDetail = () => {
     }
   };
   
-  // Format date for display
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString('es-ES', {
       year: 'numeric',
@@ -193,7 +180,6 @@ const TopicDetail = () => {
     });
   };
   
-  // Get user display name
   const getUserDisplayName = (userId, userName) => {
     if (userProfiles[userId]) {
       return userProfiles[userId].name || userProfiles[userId].displayName || userName || 'Usuario';
@@ -201,12 +187,11 @@ const TopicDetail = () => {
     return userName || 'Usuario';
   };
   
-  // Get user profile pic
   const getUserProfilePic = (userId) => {
     if (userProfiles[userId] && userProfiles[userId].profilePic) {
       return userProfiles[userId].profilePic;
     }
-    return null; // will use default avatar
+    return null; 
   };
 
   return (

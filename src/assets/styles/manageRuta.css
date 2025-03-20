@@ -17,7 +17,6 @@
     text-align: center;
   }
   
-  /* Controls styling */
   .controls-container {
     display: flex;
     justify-content: space-between;
@@ -51,7 +50,7 @@
     padding: 0.5rem;
     outline: none;
     background: transparent;
-    color: #333; /* Ensure text is visible */
+    color: #333; 
   }
   
   .add-ruta-button {
@@ -73,7 +72,6 @@
     background-color: #2a3c26;
   }
   
-  /* Table styling */
   .rutas-table-container {
     overflow-x: auto;
     margin-bottom: 1.5rem;
@@ -85,7 +83,7 @@
   .rutas-table {
     width: 100%;
     border-collapse: collapse;
-    color: #333; /* Ensure text is dark on light background */
+    color: #333; 
   }
   
   .rutas-table th, 
@@ -105,7 +103,6 @@
     background-color: #f5f5f5;
   }
   
-  /* Sortable headers */
   .sortable-header {
     cursor: pointer;
     position: relative;
@@ -120,7 +117,6 @@
     color: #354c31;
   }
   
-  /* Table cells styling */
   .image-column {
     width: 80px;
   }
@@ -156,7 +152,6 @@
     font-size: 1.5rem;
   }
   
-  /* Difficulty badges */
 .difficulty-badge {
     display: inline-flex;
     align-items: center;
@@ -165,7 +160,7 @@
     border-radius: 1rem;
     font-size: 0.85rem;
     font-weight: 500;
-    white-space: nowrap; /* Prevent wrap on narrow screens */
+    white-space: nowrap; 
   }
   
   .difficulty-easy {
@@ -188,7 +183,6 @@
     color: #7d3c95;
   }
   
-  /* Action buttons */
   .action-buttons {
     display: flex;
     gap: 0.5rem;
@@ -235,7 +229,6 @@
     background-color: #f5d0d0;
   }
   
-  /* Pagination info */
   .pagination-info {
     text-align: center;
     color: #777;
@@ -243,7 +236,6 @@
     margin-top: 1rem;
   }
   
-  /* Loading and error states */
   .loading-container {
     display: flex;
     flex-direction: column;
@@ -302,7 +294,6 @@
     color: #777;
   }
   
-  /* No data message styling */
   .no-rutas-container {
     background-color: white;
     border-radius: 0.5rem;
@@ -324,7 +315,6 @@
     margin-bottom: 1rem;
   }
   
-  /* Debug info */
   .debug-info {
     margin: 1rem;
     padding: 1rem;
@@ -343,7 +333,6 @@
     color: #333;
   }
   
-  /* Responsive styles */
   @media (max-width: 768px) {
     .controls-container {
       flex-direction: column;
@@ -363,7 +352,7 @@
     .rutas-table th,
     .rutas-table td {
       padding: 0.75rem 0.5rem;
-      color: #333; /* Ensure text color is visible */
+      color: #333; 
     }
     
     .action-buttons {

@@ -1,7 +1,7 @@
 .dashboard-container {
   width: 100%;
   min-height: 100vh;
-  background-color: #F5F0E8; /* Lighter background similar to your app theme */
+  background-color: #F5F0E8; 
   font-family: 'Poppins', Arial, sans-serif;
 }
 
@@ -16,7 +16,7 @@
   font-size: 32px;
   font-weight: 700;
   margin: 30px 0 50px;
-  color: #354c31; /* Green from your color scheme */
+  color: #354c31; 
   text-transform: uppercase;
   letter-spacing: 1px;
   position: relative;
@@ -27,7 +27,7 @@
   display: block;
   width: 100px;
   height: 3px;
-  background-color: #c88646; /* Your accent color */
+  background-color: #c88646; 
   position: absolute;
   bottom: -15px;
   left: 50%;
@@ -46,7 +46,7 @@
 }
 
 .dashboard-card {
-  background-color: #3c573a; /* Slightly lighter green for better contrast */
+  background-color: #3c573a; 
   border-radius: 15px;
   padding: 30px;
   display: flex;
@@ -135,7 +135,6 @@
   -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>');
 }
 
-/* Adding forum icon */
 .forum-icon {
   mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>');
   -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>');
@@ -171,7 +170,6 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* For mobile responsiveness */
 @media (max-width: 768px) {
   .dashboard-grid {
     grid-template-columns: 1fr;
@@ -197,7 +195,6 @@
   }
 }
 
-/* For tablet sizes */
 @media (min-width: 769px) and (max-width: 1024px) {
   .dashboard-grid {
     grid-template-columns: repeat(2, 1fr);

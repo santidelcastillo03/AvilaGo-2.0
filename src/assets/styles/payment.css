@@ -197,18 +197,15 @@
     background-color: #f5c6cb;
 }
 
-/* Make sure the container has proper height to avoid layout shifts */
 .paypal-container {
     min-height: 150px;
 }
 
-/* Force PayPal buttons to display properly */
 .paypal-buttons {
     min-height: 40px !important;
     display: block !important;
 }
 
-/* Add these styles to your payment.css file */
 
 .paypal-button-wrapper {
     max-width: 500px;
@@ -227,13 +224,11 @@
     position: relative;
 }
 
-/* Make sure PayPal buttons get proper spacing */
 .paypal-buttons {
     min-height: 45px !important;
     width: 100% !important;
 }
 
-/* Processing payment styling */
 .processing-payment {
     display: flex;
     flex-direction: column;
@@ -256,7 +251,6 @@
     to { transform: rotate(360deg); }
 }
 
-/* Success state styling */
 .payment-success-container {
     padding: 40px 20px;
     text-align: center;
@@ -271,7 +265,6 @@
     margin-bottom: 20px;
 }
 
-/* Ensure all containers have proper structure */
 .payment-page {
     background-color: #F5F0E8;
     min-height: 100vh;
@@ -284,7 +277,6 @@
     padding: 30px 20px;
 }
 
-/* Make sure elements are centered and properly sized on mobile */
 @media (max-width: 768px) {
     .paypal-button-wrapper {
         width: 100%;
@@ -296,7 +288,6 @@
     to { transform: rotate(360deg); }
 }
 
-/* Responsive styles */
 @media (max-width: 768px) {
     .reservation-summary {
         flex-direction: column;
@@ -314,7 +305,6 @@
     }
 }
 
-/* Add these styles to your payment.css file */
 .mock-payment-section {
     margin-top: 20px;
     padding: 15px;
@@ -388,7 +378,6 @@
     font-size: 1.1rem;
 }
 
-/* Add to payment.css */
 .paypal-tips {
     background-color: #f8f9fa;
     border-left: 4px solid #3b5731;
@@ -504,7 +493,6 @@
     margin-top: 10px;
 }
 
-/* Add to payment.css */
 .participant-info {
     display: flex;
     align-items: center;

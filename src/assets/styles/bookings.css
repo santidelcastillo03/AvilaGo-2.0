@@ -723,17 +723,16 @@
   background-position: right 15px center;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
   box-sizing: border-box;
-  color: #333; /* Added explicit text color */
+  color: #333; 
 }
 
-/* Ensure dropdown options have the same color */
 .filter-select option {
   color: #333;
   background-color: white;
 }
 
 ::placeholder {
-  color: #888; /* Make placeholder text visible but lighter */
+  color: #888; 
   opacity: 1;
 }
 

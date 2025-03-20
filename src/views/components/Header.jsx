@@ -27,14 +27,12 @@ function Header() {
   const [showContactModal, setShowContactModal] = useState(false);
   const navigate = useNavigate();
   
-  // Search functionality
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const searchRef = useRef(null);
   
-  // Toast notification state
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState('info'); // 'success', 'error', or 'info'
@@ -51,7 +49,6 @@ function Header() {
             const userData = userDoc.data();
             setUserRole(userData.role);
             
-            // If user has a profile picture, use it
             if (userData.profilePic) {
               setProfilePic(userData.profilePic);
             }
@@ -70,7 +67,6 @@ function Header() {
     
     fetchUserData();
     
-    // Close search results when clicking outside
     const handleClickOutside = (event) => {
       if (searchRef.current && !searchRef.current.contains(event.target)) {
         setShowSearchResults(false);
@@ -83,7 +79,6 @@ function Header() {
     };
   }, [currentUser]);
 
-  // Handle search input changes with debounce
   useEffect(() => {
     const delaySearch = setTimeout(() => {
       if (searchQuery.length >= 2) {
@@ -104,14 +99,11 @@ function Header() {
     
     try {
       const db = getFirestore();
-      // Convert search query to lowercase for case-insensitive comparison
       const lowerCaseQuery = searchQuery.toLowerCase();
       
-      // Get all routes and activities instead of using where clauses for case sensitivity
       const routesSnapshot = await getDocs(collection(db, "routes"));
       const activitiesSnapshot = await getDocs(collection(db, "activities"));
       
-      // Filter routes that match the query case-insensitively
       const routeResults = routesSnapshot.docs
         .filter(doc => {
           const title = doc.data().title?.toLowerCase() || '';
@@ -124,7 +116,6 @@ function Header() {
           data: doc.data()
         }));
       
-      // Filter activities that match the query case-insensitively
       const activityResults = await Promise.all(activitiesSnapshot.docs
         .filter(doc => {
           const title = doc.data().title?.toLowerCase() || '';
@@ -134,13 +125,11 @@ function Header() {
           const activityData = doc.data();
           let updatedData = {
             ...activityData,
-            // Ensure these crucial fields have default values
             imageSrc: activityData.imageSrc || '',
             guideName: activityData.guideName || '',
             guideId: activityData.guideId || ''
           };
           
-          // If we have a guideId but no guideName, try to fetch guide info
           if (activityData.guideId && !activityData.guideName) {
             try {
               console.log("Fetching guide data for activity:", activityData.title);
@@ -168,7 +157,6 @@ function Header() {
           };
         }));
       
-      // Combine and sort results
       const combinedResults = [...routeResults, ...activityResults]
         .sort((a, b) => a.title.localeCompare(b.title))
         .slice(0, 5); // Limit to 5 results
@@ -190,12 +178,10 @@ function Header() {
       console.log("Navigating to search result:", result);
       
       if (result.type === 'route') {
-        // For routes, use /route/:routeId pattern and pass data in state
         navigate(`/route/${result.id}`, { 
           state: result.data 
         });
       } else if (result.type === 'activity') {
-        // For activities, use /activity/:activityId pattern and pass data in state
         navigate(`/activity/${result.id}`, { 
           state: result.data 
         });
@@ -216,19 +202,15 @@ function Header() {
     }
   };
   
-  // Toast notification function
   const showToastNotification = (message, type = 'info') => {
-    // Clear any existing timeout
     if (toastTimeoutRef.current) {
       clearTimeout(toastTimeoutRef.current);
     }
     
-    // Set toast message and show it
     setToastMessage(message);
     setToastType(type);
     setShowToast(true);
     
-    // Hide toast after 3 seconds
     toastTimeoutRef.current = setTimeout(() => {
       setShowToast(false);
     }, 3000);
@@ -305,7 +287,6 @@ function Header() {
                     </div>
                   </div>
                 ))}
-                {/* Removed "Ver todos los resultados" link */}
               </>
             )}
           </div>

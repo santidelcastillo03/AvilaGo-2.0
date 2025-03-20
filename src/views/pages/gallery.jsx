@@ -3,7 +3,6 @@ import '../../assets/styles/gallery.css';
 import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
 
-// Import some of your existing images from assets
 import sabasNieves from '../../assets/images/sabas-nieves.png';
 import humboldt from '../../assets/images/humboldt.png';
 import cruzPalmeros from '../../assets/images/cruz-palmeros.png';
@@ -11,7 +10,6 @@ import picoNaiguata from '../../assets/images/pico-naiguata.png';
 import elBanquito from '../../assets/images/el-banquito.png';
 
 const GalleryPage = () => {
-  // Define all your gallery items in an array - removed isVideo property since they're all images
   const galleryItems = [
     { src: sabasNieves, alt: "Sabas Nieves" },
     { src: humboldt, alt: "Humboldt" },
@@ -20,18 +18,13 @@ const GalleryPage = () => {
     { src: elBanquito, alt: "El Banquito" }
   ];
 
-  // State to track the current position in the carousel
   const [currentIndex, setCurrentIndex] = useState(0);
   
-  // State for the focused image modal
   const [focusedImage, setFocusedImage] = useState(null);
 
-  // Calculate which items to show based on current index
-  // We'll show 3 items per page
   const itemsPerPage = 3;
   const totalPages = Math.ceil(galleryItems.length / itemsPerPage);
   
-  // Handle navigation
   const goToPrevious = () => {
     setCurrentIndex(prevIndex => 
       prevIndex === 0 ? totalPages - 1 : prevIndex - 1
@@ -44,7 +37,6 @@ const GalleryPage = () => {
     );
   };
   
-  // Get visible items for the current page
   const getVisibleItems = () => {
     const startIdx = (currentIndex * itemsPerPage) % galleryItems.length;
     const visibleItems = [];
@@ -57,12 +49,10 @@ const GalleryPage = () => {
     return visibleItems;
   };
   
-  // Handle image click to focus
   const handleImageClick = (item) => {
     setFocusedImage(item);
   };
   
-  // Close the modal
   const closeModal = () => {
     setFocusedImage(null);
   };

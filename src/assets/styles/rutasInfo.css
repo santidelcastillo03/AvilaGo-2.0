@@ -1,4 +1,3 @@
-/* General page layout */
 .trail-detail-page {
   min-height: 100vh;
   display: flex;
@@ -17,7 +16,6 @@
   box-sizing: border-box;
 }
 
-/* Trail title styling */
 .trail-title {
   font-size: 38px;
   font-weight: 800;
@@ -40,7 +38,6 @@
   border-radius: 3px;
 }
 
-/* Trail images */
 .trail-images-container {
   margin-bottom: 40px;
   border-radius: 15px;
@@ -59,7 +56,6 @@
   object-fit: cover;
 }
 
-/* Trail info section */
 .trail-info-section {
   background-color: white;
   border-radius: 15px;
@@ -68,7 +64,6 @@
   margin-bottom: 40px;
 }
 
-/* Stats styling - more like the footer modal */
 .trail-stats {
   display: flex;
   flex-wrap: wrap;
@@ -120,7 +115,6 @@
   color: #2c3e50;
 }
 
-/* Difficulty colors */
 .easy {
   color: #2ecc71;
 }
@@ -133,7 +127,6 @@
   color: #e74c3c;
 }
 
-/* Content section */
 .content-section {
   display: flex;
   flex-wrap: wrap;
@@ -175,10 +168,7 @@
   font-size: 16px;
 }
 
-/* Map container - styled like the footer modal */
-/* Update the map container styles */
 
-/* Update these map container styles to ensure proper display */
 
 .map-container {
   position: relative;
@@ -198,7 +188,6 @@
   background-color: #f0f0f0;
 }
 
-/* Loading indicator */
 .map-loading {
   position: absolute;
   top: 0;
@@ -302,7 +291,6 @@
   color: #555;
 }
 
-/* Override any problematic CSS with !important */
 .activities-button-container {
   display: flex !important;
   justify-content: center !important;
@@ -311,7 +299,7 @@
   margin: 40px auto !important;
   width: 100% !important;
   max-width: 500px !important;
-  position: static !important; /* Change to static */
+  position: static !important; 
   flex-wrap: wrap !important;
   float: none !important;
   left: auto !important;
@@ -324,7 +312,7 @@
 
 .activities-button, 
 .back-button {
-  position: static !important; /* Ensure buttons are not positioned absolutely */
+  position: static !important; 
   float: none !important;
   display: inline-block !important;
   padding: 12px 30px !important;
@@ -340,7 +328,6 @@
   z-index: 5 !important;
 }
 
-/* Apply specific styles for each button */
 .activities-button {
   background-color: #3b5731 !important;
   color: white !important;
@@ -363,7 +350,6 @@
   transform: translateY(-2px);
 }
 
-/* Responsive adjustments */
 @media (max-width: 480px) {
   .activities-button-container {
     flex-direction: column;
@@ -374,11 +360,10 @@
   .activities-button, 
   .back-button {
     width: 100%;
-    min-width: unset; /* Allow full width on mobile */
+    min-width: unset; 
   }
 }
 
-/* Responsive styles */
 @media (max-width: 992px) {
   .trail-stats {
     padding: 20px;

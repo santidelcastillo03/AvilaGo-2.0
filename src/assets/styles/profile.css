@@ -1,4 +1,3 @@
-/* General styles for the profile page */
 .profile-page {
   min-height: 100vh;
   display: flex;
@@ -15,14 +14,12 @@
   box-sizing: border-box;
 }
 
-/* Profile main sections */
 .profile-container {
   display: flex;
   flex-direction: column;
   gap: 30px;
 }
 
-/* Profile header */
 .profile-header {
   display: flex;
   justify-content: space-between;
@@ -32,11 +29,10 @@
 
 .profile-header h1 {
   font-size: 32px;
-  color: #2c3e50; /* Darker blue-gray color */
+  color: #2c3e50; 
   margin: 0;
 }
 
-/* Profile sections */
 .profile-section {
   background-color: white;
   border-radius: 8px;
@@ -45,7 +41,7 @@
 }
 
 .section-title {
-  color: #2c3e50; /* Matching header color */
+  color: #2c3e50; 
   font-size: 22px;
   margin-top: 0;
   margin-bottom: 20px;
@@ -53,26 +49,24 @@
   padding-bottom: 10px;
 }
 
-/* User details */
 .user-name {
   font-size: 24px;
-  color: #2c3e50; /* Matching header color */
+  color: #2c3e50; 
   margin: 0 0 10px 0;
 }
 
 .user-email, .user-phone {
-  color: #34495e; /* Slightly lighter than headers */
+  color: #34495e; 
   margin: 8px 0;
   font-size: 16px;
 }
 
 .user-joined {
-  color: #7f8c8d; /* Lighter gray for less important info */
+  color: #7f8c8d; 
   margin: 8px 0;
   font-style: italic;
 }
 
-/* Add these styles for the role display */
 
 .user-role {
   display: flex;
@@ -139,7 +133,6 @@
   100% { transform: rotate(360deg); }
 }
 
-/* Error state */
 .error-container {
   text-align: center;
   padding: 50px 20px;
@@ -152,12 +145,12 @@
 }
 
 .error-container h2 {
-  color: #2c3e50; /* Matching header color */
+  color: #2c3e50; 
   margin-bottom: 20px;
 }
 
 .error-container p {
-  color: #34495e; /* Slightly lighter than headers */
+  color: #34495e; 
   margin-bottom: 30px;
   max-width: 600px;
 }
@@ -177,7 +170,6 @@
   background-color: #5f7346;
 }
 
-/* User status */
 .profile-title-section {
   display: flex;
   flex-direction: column;
@@ -190,7 +182,6 @@
   font-weight: 500;
 }
 
-/* Edit button */
 .edit-button {
   background-color: #748e55;
   color: white;
@@ -206,7 +197,6 @@
   background-color: #5f7346;
 }
 
-/* Form fields in edit mode */
 .input-group {
   margin-bottom: 15px;
 }
@@ -227,7 +217,6 @@
   color: #2c3e50;
 }
 
-/* Activities section */
 .activities-list {
   display: flex;
   flex-direction: column;
@@ -268,7 +257,7 @@
 }
 
 .star.filled {
-  color: #f1c40f; /* A bright yellow for star ratings */
+  color: #f1c40f; 
 }
 
 .no-activities {
@@ -276,7 +265,6 @@
   font-style: italic;
 }
 
-/* Settings section */
 .settings-list {
   display: flex;
   flex-direction: column;
@@ -311,7 +299,6 @@
   font-size: 14px;
 }
 
-/* Profile Image Upload Styles */
 .profile-image-container {
   position: relative;
   cursor: pointer;
@@ -377,7 +364,6 @@
   }
 }
 
-/* Añadir a tu archivo profile.css si no están ya */
 
 .uploading-overlay {
   position: absolute;
@@ -419,7 +405,6 @@
   cursor: not-allowed;
 }
 
-/* Edit and Save buttons - Enhanced styling */
 .edit-button,
 .save-button,
 .cancel-button {
@@ -460,7 +445,6 @@
   font-size: 16px;
 }
 
-/* Save button specific styling */
 .save-button {
   background-color: #27ae60; /* Green color for save */
   box-shadow: 0 3px 8px rgba(39, 174, 96, 0.3);
@@ -475,7 +459,6 @@
   box-shadow: 0 2px 5px rgba(39, 174, 96, 0.25);
 }
 
-/* Cancel button specific styling */
 .cancel-button {
   background-color: #e74c3c; /* Red color for cancel */
   box-shadow: 0 3px 8px rgba(231, 76, 60, 0.3);
@@ -493,7 +476,6 @@
   box-shadow: 0 2px 5px rgba(231, 76, 60, 0.25);
 }
 
-/* Button container for edit mode */
 .edit-buttons-container {
   display: flex;
   justify-content: flex-end;
@@ -501,7 +483,6 @@
   gap: 12px;
 }
 
-/* Responsive adjustments */
 @media screen and (max-width: 768px) {
   .edit-button,
   .save-button,

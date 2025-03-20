@@ -60,9 +60,7 @@
     margin-right: 0.5rem;
   }
   
-  /* Add to c:\Users\Santiago\Desktop\ag\src\assets\styles\actCard.css */
   
-  /* Update star rating styles */
   .stars-container {
       display: flex;
       align-items: center;
@@ -78,14 +76,12 @@
       margin-right: 3px;
     }
     
-    /* Half-star container */
     .star-half-container {
       position: relative;
       display: inline-block;
       margin-right: 3px;
     }
     
-    /* The half-filled star is clipped to show only 50% */
     .star-half-container .half {
       position: absolute;
       top: 0;
@@ -161,10 +157,7 @@
   .act-card-btn:hover .arrow-icon {
     transform: translateX(4px);
   }
-  /* Add these styles to c:\Users\Santiago\Desktop\ag\src\assets\styles\actCard.css */
   
-  /* Date and time schedule styles */
-  /* Add to c:\Users\Santiago\Desktop\ag\src\assets\styles\actCard.css */
   
   .act-card-schedule {
     margin: 0.8rem 0;
@@ -204,7 +197,6 @@
     margin-right: 0.4rem;
   }
   
-  /* Update existing styles to accommodate the new elements */
   .act-card-content {
     padding: 1.2rem;
     background-color: #3c5c33;
@@ -228,7 +220,6 @@
     gap: 1rem;
   }
   
-  /* Style adjustments for better spacing */
   .act-card-guide {
     display: flex;
     align-items: center;
@@ -281,7 +272,6 @@
     font-weight: 600;
   }
   
-  /* Button styles */
   .act-card-button-container {
     margin-top: auto;
     padding-top: 1rem;

@@ -8,17 +8,15 @@ const ActCard = ({
   imageSrc, 
   guideName,
   rating = 0,
-  date = 'Fechas flexibles', // This now contains the formatted date with time if available
+  date = 'Fechas flexibles', 
   onClick 
 }) => {
-  // Generate star rating display with working half stars
   const renderStars = (rating) => {
     const stars = [];
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
     const totalStars = 5;
     
-    // Add full stars
     for (let i = 0; i < fullStars; i++) {
       stars.push(
         <FontAwesomeIcon 
@@ -29,7 +27,6 @@ const ActCard = ({
       );
     }
     
-    // Add half star if needed
     if (hasHalfStar) {
       stars.push(
         <span key="half-star" className="star-half-container">
@@ -39,7 +36,6 @@ const ActCard = ({
       );
     }
     
-    // Add empty stars to make 5 total
     const emptyStarsCount = totalStars - fullStars - (hasHalfStar ? 1 : 0);
     for (let i = 0; i < emptyStarsCount; i++) {
       stars.push(
@@ -54,7 +50,6 @@ const ActCard = ({
     return stars;
   };
 
-  // Check if date includes time information
   const hasTimeInfo = date && date.includes(' a las ');
 
   return (
@@ -69,12 +64,10 @@ const ActCard = ({
       <div className="act-card-content">
         <h3 className="act-card-title">{title}</h3>
         
-        {/* Date information with separate icon for time if needed */}
         <div className="act-card-schedule">
           <div className="act-card-date-row">
             <FontAwesomeIcon icon={faCalendarAlt} className="schedule-icon" />
             {hasTimeInfo ? (
-              // If date contains time, separate and display with appropriate icons
               <div className="date-time-info">
                 <span className="date-part">{date.split(' a las ')[0]}</span>
                 <div className="time-part">
@@ -83,7 +76,6 @@ const ActCard = ({
                 </div>
               </div>
             ) : (
-              // Otherwise just display the date string
               <span>{date}</span>
             )}
           </div>

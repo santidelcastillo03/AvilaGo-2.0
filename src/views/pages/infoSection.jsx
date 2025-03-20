@@ -18,7 +18,6 @@ import {
 import '../../assets/styles/infoSection.css';
 
 const InfoSection = () => {
-  // Array of recommendations
   const recommendations = [
     {
       id: 1,
@@ -52,7 +51,6 @@ const InfoSection = () => {
     }
   ];
 
-  // Array of safety tips
   const safetyTips = [
     {
       id: 1,
@@ -81,7 +79,6 @@ const InfoSection = () => {
     }
   ];
 
-  // Array of interesting facts
   const facts = [
     {
       id: 1,
@@ -110,7 +107,6 @@ const InfoSection = () => {
     }
   ];
 
-  // Guide to the best hiking trails
   const hikingTrails = [
     {
       id: 1,
