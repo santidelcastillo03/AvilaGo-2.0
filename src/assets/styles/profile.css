@@ -418,3 +418,101 @@
   background-color: #95a5a6;
   cursor: not-allowed;
 }
+
+/* Edit and Save buttons - Enhanced styling */
+.edit-button,
+.save-button,
+.cancel-button {
+  background-color: #748e55;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  padding: 10px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 8px rgba(116, 142, 85, 0.3);
+  min-width: 120px;
+  letter-spacing: 0.3px;
+}
+
+.edit-button:hover,
+.save-button:hover {
+  background-color: #5f7346;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(116, 142, 85, 0.4);
+}
+
+.edit-button:active,
+.save-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 5px rgba(116, 142, 85, 0.25);
+}
+
+.edit-button i,
+.save-button i,
+.cancel-button i {
+  margin-right: 8px;
+  font-size: 16px;
+}
+
+/* Save button specific styling */
+.save-button {
+  background-color: #27ae60; /* Green color for save */
+  box-shadow: 0 3px 8px rgba(39, 174, 96, 0.3);
+}
+
+.save-button:hover {
+  background-color: #219653;
+  box-shadow: 0 5px 12px rgba(39, 174, 96, 0.4);
+}
+
+.save-button:active {
+  box-shadow: 0 2px 5px rgba(39, 174, 96, 0.25);
+}
+
+/* Cancel button specific styling */
+.cancel-button {
+  background-color: #e74c3c; /* Red color for cancel */
+  box-shadow: 0 3px 8px rgba(231, 76, 60, 0.3);
+  margin-right: 12px;
+}
+
+.cancel-button:hover {
+  background-color: #c0392b;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(231, 76, 60, 0.4);
+}
+
+.cancel-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 5px rgba(231, 76, 60, 0.25);
+}
+
+/* Button container for edit mode */
+.edit-buttons-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  gap: 12px;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+  .edit-button,
+  .save-button,
+  .cancel-button {
+    padding: 8px 20px;
+    font-size: 14px;
+    min-width: 100px;
+  }
+  
+  .edit-buttons-container {
+    justify-content: center;
+    margin-top: 25px;
+  }
+}
