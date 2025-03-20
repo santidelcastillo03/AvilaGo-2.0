@@ -298,14 +298,20 @@ const ActGuideCard = ({
               ></textarea>
             </label>
             <label>
-              Tipo:
-              <input 
-                type="text" 
-                name="type" 
-                value={editData.type} 
-                onChange={handleModalChange} 
-              />
-            </label>
+  Tipo:
+  <select 
+    name="type" 
+    value={editData.type} 
+    onChange={handleModalChange}
+  >
+    <option value="">Selecciona un tipo</option>
+    <option value="Senderismo">Senderismo</option>
+    <option value="Cámping">Cámping</option>
+    <option value="Yoga">Yoga</option>
+    <option value="Observación de aves">Observación de aves</option>
+    <option value="Fotografía">Fotografía</option>
+  </select>
+</label>
             <div className="modal-buttons">
               <button onClick={handleSave}>Guardar</button>
               <button onClick={() => setShowEditModal(false)}>Cancelar</button>
