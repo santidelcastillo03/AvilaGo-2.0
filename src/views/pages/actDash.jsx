@@ -20,19 +20,19 @@ import ActCard from '../components/ActGuideCard.jsx';
 import '../../assets/styles/actDash.css';
 
 // Import activity images
-import hikingImage from '../../assets/images/logo.png';
-import campingImage from '../../assets/images/logo.png';
-import yogaImage from '../../assets/images/logo.png';
-import birdwatchingImage from '../../assets/images/logo.png';
-import photographyImage from '../../assets/images/logo.png';
+import hikingImage from '../../assets/images/Hiking1.jpg';
+import campingImage from '../../assets/images/Camping1.jpg';
+import yogaImage from '../../assets/images/Yoga1.jpg';
+import birdwatchingImage from '../../assets/images/Birds1.jpeg';
+import photographyImage from '../../assets/images/Photo1.jpg';
 
 // Activity type to image mapping
 const activityImages = {
-  'Hiking': hikingImage,
-  'Camping': campingImage,
+  'Senderismo': hikingImage,
+  'Cámping': campingImage,
   'Yoga': yogaImage,
-  'Birdwatching': birdwatchingImage,
-  'Photography': photographyImage,
+  'Observación de aves': birdwatchingImage,
+  'Fotografía': photographyImage,
   'default': hikingImage // Default image
 };
 
@@ -455,12 +455,18 @@ const ActDash = () => {
             </label>
             <label>
               Tipo:
-              <input 
-                type="text" 
+              <select 
                 name="type" 
                 value={newActivityData.type} 
-                onChange={handleCreateModalChange} 
-              />
+                onChange={handleCreateModalChange}
+              >
+                <option value="">Selecciona un tipo</option>
+                <option value="Senderismo">Senderismo</option>
+                <option value="Cámping">Cámping</option>
+                <option value="Yoga">Yoga</option>
+                <option value="Observación de aves">Observación de aves</option>
+                <option value="Fotografía">Fotografía</option>
+              </select>
             </label>
             <label>
               Capacidad:
