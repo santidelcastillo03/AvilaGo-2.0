@@ -15,6 +15,8 @@ import elBanquito from '../../assets/images/el-banquito.png';
 import piedraIndio from '../../assets/images/piedra-indio.png';
 import picoOriental from '../../assets/images/pico-oriental.png';
 import antenasAvila from '../../assets/images/antenas-avila.png';
+import defaultLogo from '../../assets/images/logo.png';
+
 
 const routeImages = {
   'Sabas Nieves': sabasNieves,
@@ -25,7 +27,7 @@ const routeImages = {
   'Piedra del Indio': piedraIndio,
   'Pico Oriental': picoOriental,
   'Antenas Avila': antenasAvila,
-  'default': sabasNieves
+  'default': defaultLogo
 };
 
 const Rutas = () => {
